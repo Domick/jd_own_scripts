@@ -7,8 +7,8 @@
 #京东极速版红包(活动时间：2021-5-5至2021-5-31)
 45 0,23 * * * node /scripts/jd_speed_redpocke.js >> /scripts/logs/jd_speed_redpocke.log 2>&1
 
-#超级直播间红包雨(活动时间不定期，出现异常提示请忽略。红包雨期间会正常)
-1,31 0-23/1 * * * node /scripts/jd_live_redrain.js >> /scripts/logs/jd_live_redrain.log 2>&1
+# #超级直播间红包雨(活动时间不定期，出现异常提示请忽略。红包雨期间会正常)
+# 1,31 0-23/1 * * * node /scripts/jd_live_redrain.js >> /scripts/logs/jd_live_redrain.log 2>&1
 
 #每日抽奖(活动时间：2021-05-01至2021-05-31)
 13 1,22,23 * * * node /scripts/jd_daily_lottery.js >> /scripts/logs/jd_daily_lottery.log 2>&1
@@ -34,8 +34,8 @@
 6 0,23 * * * node /scripts/jd_club_lottery.js >> /scripts/logs/jd_club_lottery.log 2>&1
 # 东东农场
 15 6-18/6 * * * node /scripts/jd_fruit.js >> /scripts/logs/jd_fruit.log 2>&1
-# 宠汪汪邀请助力
-10 13-20/1 * * * node /scripts/jd_joy_run.js >> /scripts/logs/jd_joy_run.log 2>&1
+# # 宠汪汪邀请助力
+# 10 13-20/1 * * * node /scripts/jd_joy_run.js >> /scripts/logs/jd_joy_run.log 2>&1
 # 摇钱树
 23 */2 * * * node /scripts/jd_moneyTree.js >> /scripts/logs/jd_moneyTree.log 2>&1
 # 东东萌宠
@@ -101,7 +101,7 @@
 #监控crazyJoy分红
 10 12 * * * node /scripts/jd_crazy_joy_bonus.js >> /scripts/logs/jd_crazy_joy_bonus.log 2>&1
 #京喜财富岛
-5 7,12,18 * * * node /scripts/jd_cfd.js >> /scripts/logs/jd_cfd.log 2>&1
+0 0 * * * node /scripts/jd_cfd.ts >> /scripts/logs/jd_cfd.log 2>&1
 # 删除优惠券(默认注释，如需要自己开启，如有误删，已删除的券可以在回收站中还原，慎用)
 #20 9 * * 6 node /scripts/jd_delCoupon.js >> /scripts/logs/jd_delCoupon.log 2>&1
 #家庭号
@@ -118,3 +118,9 @@
 5 0 * * * node /scripts/jd_jin_tie.js >> /scripts/logs/jd_jin_tie.log 2>&1
 # 跳跳乐瓜分京豆
 15 0,12,22 * * * node /scripts/jd_jump.js >> /scripts/logs/jd_jump.log 2>&1
+# 极速版-发财大赢家
+0 30 * * * ts-node /scripts/jd_spped_redEnvelope.ts >> /scripts/logs/jd_spped_redEnvelope.log 2>&1
+# 许愿池
+0 10 * * * ts-node /scripts/jd_wishingPool.ts >> /scripts/logs/jd_wishingPool.log 2>&1
+# 伊利奶牛
+0 20 * * * ts-node /scripts/jd_yili_cow.ts >> /scripts/logs/jd_yili_cow.log 2>&1
