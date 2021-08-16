@@ -24,6 +24,8 @@
 #省钱大赢家之翻翻乐
 10,40 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
 ##############长期活动##############
+#京喜牧场
+15 0,12,22 * * * ts-node /scripts/jd_jxmc.ts >> /scripts/logs/jd_jxmc.log 2>&1
 # 签到
 7 0,17 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
 # 东东超市兑换奖品
@@ -116,5 +118,3 @@
 5 0 * * * node /scripts/jd_jin_tie.js >> /scripts/logs/jd_jin_tie.log 2>&1
 # 跳跳乐瓜分京豆
 15 0,12,22 * * * node /scripts/jd_jump.js >> /scripts/logs/jd_jump.log 2>&1
-#京喜牧场
-15 0,12,22 * * * node /scripts/jd_jxmc.js >> /scripts/logs/jd_jxmc.log 2>&1
