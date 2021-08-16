@@ -119,8 +119,8 @@
 # 跳跳乐瓜分京豆
 15 0,12,22 * * * node /scripts/jd_jump.js >> /scripts/logs/jd_jump.log 2>&1
 # 极速版-发财大赢家
-0 30 * * * (ts-node /scripts/jd_spped_redEnvelope.ts) >> /scripts/logs/jd_spped_redEnvelope.log 2>&1
+30 */1 * * * (ts-node /scripts/jd_spped_redEnvelope.ts) >> /scripts/logs/jd_spped_redEnvelope.log 2>&1
 # 许愿池
-0 10 * * * (ts-node /scripts/jd_wishingPool.ts) >> /scripts/logs/jd_wishingPool.log 2>&1
+10 */1 * * * (ts-node /scripts/jd_wishingPool.ts) >> /scripts/logs/jd_wishingPool.log 2>&1
 # 伊利奶牛
-0 20 * * * (ts-node /scripts/jd_yili_cow.ts) >> /scripts/logs/jd_yili_cow.log 2>&1
+20 */1 * * * (ts-node /scripts/jd_yili_cow.ts) >> /scripts/logs/jd_yili_cow.log 2>&1
