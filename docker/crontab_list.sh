@@ -124,3 +124,7 @@
 10 */1 * * * ts-node /scripts/jd_wishingPool.ts >> /scripts/logs/jd_wishingPool.log 2>&1
 # 伊利奶牛
 20 */1 * * * ts-node /scripts/jd_yili_cow.ts >> /scripts/logs/jd_yili_cow.log 2>&1
+# joy_park
+20 */2 * * * ts-node /scripts/jd_joy_park.ts >> /scripts/logs/jd_joy_park.log 2>&1
+# joy_qq_pasture
+45 */2 * * * ts-node /scripts/joy_qq_pasture.ts >> /scripts/logs/joy_qq_pasture.log 2>&1
