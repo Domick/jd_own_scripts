@@ -228,8 +228,8 @@ if [ -n "$ENABLE_AUTO_HELP" ]; then
   fi
 fi
 
-echo "第8步增加 |ts 任务日志输出时间戳..."
-sed -i "/\( ts\| |ts\|| ts\)/!s/>>/\|ts >>/g" $mergedListFile
+# echo "第8步增加 |ts 任务日志输出时间戳..."
+# sed -i "/\( ts\| |ts\|| ts\)/!s/>>/\|ts >>/g" $mergedListFile
 
 echo "第9步执行proc_file.sh脚本任务..."
 sh /scripts/docker/proc_file.sh
