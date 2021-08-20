@@ -25,7 +25,7 @@
 10,40 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
 ##############长期活动##############
 #京喜牧场
-15 0,6,12,18,22 * * * ts-node /scripts/jd_jxmc.ts >> /scripts/logs/jd_jxmc.log 2>&1
+15 */1 * * * cd /scripts && ts-node jd_jxmc.ts >> /scripts/logs/jd_jxmc.log 2>&1
 # 签到
 7 0,17 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
 # 东东超市兑换奖品
@@ -119,18 +119,18 @@
 # 跳跳乐瓜分京豆
 15 0,12,22 * * * node /scripts/jd_jump.js >> /scripts/logs/jd_jump.log 2>&1
 # 极速版-发财大赢家
-30 */1 * * * ts-node /scripts/jd_spped_redEnvelope.ts >> /scripts/logs/jd_spped_redEnvelope.log 2>&1
+30 */1 * * * cd /scripts && ts-node jd_spped_redEnvelope.ts >> /scripts/logs/jd_spped_redEnvelope.log 2>&1
 # 许愿池
-10 */1 * * * ts-node /scripts/jd_wishingPool.ts >> /scripts/logs/jd_wishingPool.log 2>&1
+10 */1 * * * cd /scripts && ts-node jd_wishingPool.ts >> /scripts/logs/jd_wishingPool.log 2>&1
 # 伊利奶牛
-20 */1 * * * ts-node /scripts/jd_yili_cow.ts >> /scripts/logs/jd_yili_cow.log 2>&1
+20 */1 * * * cd /scripts && ts-node jd_yili_cow.ts >> /scripts/logs/jd_yili_cow.log 2>&1
 # joy_park
-20 */2 * * * ts-node /scripts/jd_joy_park.ts >> /scripts/logs/jd_joy_park.log 2>&1
+20 */2 * * * cd /scripts && ts-node jd_joy_park.ts >> /scripts/logs/jd_joy_park.log 2>&1
 # joy_qq_pasture
-45 */2 * * * ts-node /scripts/jd_qq_pasture.ts >> /scripts/logs/jd_qq_pasture.log 2>&1
+45 */2 * * * cd /scripts && ts-node jd_qq_pasture.ts >> /scripts/logs/jd_qq_pasture.log 2>&1
 # 京喜签到
-15 0,19 * * * ts-node /scripts/jx_sign.ts >> /scripts/logs/jx_sign.log 2>&1
+15 0,19 * * * cd /scripts && ts-node jx_sign.ts >> /scripts/logs/jx_sign.log 2>&1
 # 京东农场-拓展
-30 0,8,13,19 * * * ts-node /scripts/jd_fruit_moreTask.ts >> /scripts/logs/jd_fruit_moreTask.log 2>&1
+30 0,8,13,19 * * * cd /scripts && ts-node jd_fruit_moreTask.ts >> /scripts/logs/jd_fruit_moreTask.log 2>&1
 # 京东拼购？
-20 0,12,21 * * * ts-node /scripts/jd_IndustryLottery.ts >> /scripts/logs/jd_IndustryLottery.log 2>&1
+20 0,12,21 * * * cd /scripts && ts-node jd_IndustryLottery.ts >> /scripts/logs/jd_IndustryLottery.log 2>&1
