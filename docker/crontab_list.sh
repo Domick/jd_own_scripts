@@ -134,3 +134,7 @@
 30 0,8,13,19 * * * cd /scripts && ts-node jd_fruit_moreTask.ts >> /scripts/logs/jd_fruit_moreTask.log 2>&1
 # 京东拼购？
 20 0,12,21 * * * cd /scripts && ts-node jd_IndustryLottery.ts >> /scripts/logs/jd_IndustryLottery.log 2>&1
+# 宠汪汪二代 每三小时喂一次
+5 */3 * * * cd /scripts && node jd_joy_new.js >> /scripts/logs/jd_joy_new.log 2>&1
+# 宠汪汪兑奖 
+0 0,8,16 * * * cd /scripts && ts-node jd_joy_reward.ts >> /scripts/logs/jd_joy_reward.log 2>&1
