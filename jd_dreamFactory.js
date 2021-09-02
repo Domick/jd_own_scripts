@@ -1647,10 +1647,9 @@ let notifyLevel = $.isNode() ? process.env.JXGC_NOTIFY_LEVEL || 2 : 2;
 const randomCount = $.isNode() ? 20 : 5;
 let tuanActiveId = ``, hasSend = false;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
-let cookiesArr = [], cookie = '', message = '', allMessage = '';
+let cookiesArr = [], cookie = '', message = '', allMessage = '', runTimesErr = '';
 const inviteCodes = [''];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-let runTimesErr = '', runTimesErrNotify = process.env.runTimesErrNotify ?? "false";
 $.tuanIds = [];
 $.appId = 10001;
 if ($.isNode()) {
@@ -1678,7 +1677,7 @@ if ($.isNode()) {
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
       $.isLogin = true;
-      $.nickName = '';
+      $.nickName = $.UserName;
       message = '';
       $.ele = 0;
       $.pickEle = 0;
@@ -1721,6 +1720,9 @@ if ($.isNode()) {
   }
   if ($.isNode() && allMessage) {
     await notify.sendNotify(`${$.name}`, `${allMessage}`, {url: jxOpenUrl})
+  }
+  if (runTimesErr) {
+    await notify.sendNotify(`${$.name}上报失败`, runTimesErr, '', '\n\n你好,世界!')
   }
 })()
 
@@ -2239,13 +2241,13 @@ function userInfo() {
                 }, (err, resp, data) => {
                   if (err) {
                     console.log('上报失败', err)
-                    runTimesErr += `${$.userName}:${err}\n`
+                    runTimesErr += `${$.UserName}:${err}\n`
                   } else {
                     if (data === '1' || data === '0') {
                       console.log('上报成功')
                     } else {
                       console.log('上报失败', data)
-                      runTimesErr += `${$.userName}:${data}\n`
+                      runTimesErr += `${$.UserName}:${data}\n`
                     }
                   }
                 })
@@ -2665,8 +2667,8 @@ async function tuanActivity() {
 
 async function joinLeaderTuan() {
   let res = await updateTuanIdsCDN()
-  let res2 = await updateTuanIdsCDN("https://raw.githubusercontent.com/JDHelloWorld/jd_scripts/main/tools/empty.json")
-  if (!res) res = await updateTuanIdsCDN('https://raw.githubusercontent.com/JDHelloWorld/jd_scripts/main/tools/empty.json');
+  let res2 = await updateTuanIdsCDN("https://raw.githubusercontent.com/JDHelloWorld/jd_scripts/main/utils/empty.json")
+  if (!res) res = await updateTuanIdsCDN('https://raw.githubusercontent.com/JDHelloWorld/jd_scripts/main/utils/empty.json');
   $.authorTuanIds = [...(res && res.tuanIds || []), ...(res2 && res2.tuanIds || [])]
   if ($.authorTuanIds && $.authorTuanIds.length) {
     for (let tuanId of $.authorTuanIds) {
