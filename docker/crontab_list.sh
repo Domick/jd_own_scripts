@@ -36,8 +36,6 @@
 15 6-18/6 * * * node /scripts/jd_fruit.js >> /scripts/logs/jd_fruit.log 2>&1
 # # 宠汪汪邀请助力
 # 10 13-20/1 * * * node /scripts/jd_joy_run.js >> /scripts/logs/jd_joy_run.log 2>&1
-# 摇钱树
-23 */2 * * * node /scripts/jd_moneyTree.js >> /scripts/logs/jd_moneyTree.log 2>&1
 # 东东萌宠
 35 6-18/6 * * * node /scripts/jd_pet.js >> /scripts/logs/jd_pet.log 2>&1
 # 京东种豆得豆
@@ -101,7 +99,7 @@
 #监控crazyJoy分红
 10 12 * * * node /scripts/jd_crazy_joy_bonus.js >> /scripts/logs/jd_crazy_joy_bonus.log 2>&1
 #京喜财富岛
-0 */2 * * * node /scripts/jd_cfd.ts >> /scripts/logs/jd_cfd.log 2>&1git
+0 */2 * * * cd /scripts && ts-node jd_cfd.ts >> /scripts/logs/jd_cfd.log 2>&1git
 # 删除优惠券(默认注释，如需要自己开启，如有误删，已删除的券可以在回收站中还原，慎用)
 #20 9 * * 6 node /scripts/jd_delCoupon.js >> /scripts/logs/jd_delCoupon.log 2>&1
 #家庭号
@@ -138,3 +136,7 @@
 5 */3 * * * cd /scripts && node jd_joy_new.js >> /scripts/logs/jd_joy_new.log 2>&1
 # 宠汪汪兑奖 
 0 0,8,16 * * * cd /scripts && ts-node jd_joy_reward.ts >> /scripts/logs/jd_joy_reward.log 2>&1
+# 摇钱树
+0 */2 * * * cd /scripts && ts-node jd_moneyTree.ts >> /scripts/logs/jd_moneyTree.log 2>&1git
+# 女装盲盒
+0 */4 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1git

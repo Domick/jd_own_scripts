@@ -85,7 +85,7 @@ async function jdFruit() {
             runTimesErr += `${$.UserName}:${e}\n`
           }
         }
-        await $.wait(3000)
+        await $.wait(Math.floor(Math.random() * 10 + 3) * 1000)
       }
 
       console.log(`\n【已成功兑换水果】${$.farmInfo.farmUserPro.winTimes}次\n`);
@@ -134,12 +134,11 @@ async function jdFruit() {
 function runTimes() {
   return new Promise((resolve, reject) => {
     $.get({
-      url: `https://api.sharecode.ga/api/runTimes?activityId=farm&sharecode=${$.farmInfo.farmUserPro.shareCode}`
+      url: `https://api.jdsharecode.xyz/api/runTimes?activityId=farm&sharecode=${$.farmInfo.farmUserPro.shareCode}`
     }, (err, resp, data) => {
       if (err) {
         console.log('上报失败', err)
         reject(err)
-        // runTimesErr += `${$.UserName}:${err}\n`
       } else {
         if (data === '1' || data === '0') {
           console.log('上报成功')
@@ -1327,7 +1326,7 @@ function timeFormat(time) {
 
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `https://api.sharecode.ga/api/farm/${randomCount}`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `https://api.jdsharecode.xyz/api/farm/${randomCount}`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
