@@ -142,3 +142,5 @@
 0 */4 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1
 # 京喜工厂
 30 * * * * cd /scripts && ts-node jd_jxgc.ts >> /scripts/logs/jd_jxgc.log 2>&1
+# 京喜工厂助力
+55 4,8,14 * * * node /scripts/jd_dreamFactory_help.js >> /scripts/logs/jd_dreamFactory_help.log 2>&1
