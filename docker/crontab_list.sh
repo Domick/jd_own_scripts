@@ -150,3 +150,5 @@
 30 */2 * * * cd /scripts && ts-node jd_ddWorld.ts >> /scripts/logs/jd_ddWorld.log 2>&1
 # 京东魔方
 22 */4 * * * cd /scripts && ts-node jd_mofang.ts >> /scripts/logs/jd_mofang.log 2>&1
+# 京喜牧场-新商品推送
+0 * * * * cd /scripts && ts-node jd_jxmc_stock.ts >> /scripts/logs/jd_jxmc_stock.log 2>&1
