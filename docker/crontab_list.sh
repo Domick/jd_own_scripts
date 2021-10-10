@@ -154,3 +154,7 @@
 0 * * * * cd /scripts && ts-node jd_jxmc_stock.ts >> /scripts/logs/jd_jxmc_stock.log 2>&1
 # 京喜app->领88元红包
 0 0,6,10 * * * cd /scripts && ts-node jd_88hb.ts >> /scripts/logs/jd_88hb.log 2>&1
+# 京东快递
+10 0 * * * node /scripts/jd_kd.js >> /scripts/logs/jd_kd.log 2>&1
+# 京东快递更新通知
+0-23/2 * * * * cd /scripts && ts-node jd_track.ts >> /scripts/logs/jd_track.log 2>&1
