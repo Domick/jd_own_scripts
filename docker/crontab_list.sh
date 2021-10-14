@@ -55,7 +55,7 @@
 # 京东排行榜
 21 9 * * * node /scripts/jd_rankingList.js >> /scripts/logs/jd_rankingList.log 2>&1
 # 天天提鹅
-28 * * * * node /scripts/jd_daily_egg.js >> /scripts/logs/jd_daily_egg.log 2>&1
+0 * * * * node /scripts/jd_daily_egg.js >> /scripts/logs/jd_daily_egg.log 2>&1
 # 金融养猪
 32 0-23/6 * * * node /scripts/jd_pigPet.js >> /scripts/logs/jd_pigPet.log 2>&1
 # 京喜工厂
@@ -158,3 +158,5 @@
 10 0 * * * node /scripts/jd_kd.js >> /scripts/logs/jd_kd.log 2>&1
 # 京东快递更新通知
 0-23/2 * * * * cd /scripts && ts-node jd_track.ts >> /scripts/logs/jd_track.log 2>&1
+# 极速版-发财大赢家
+0 0,8,20 * * * cd /scripts && ts-node jd_speed_redEnvelope.ts >> /scripts/logs/jd_speed_redEnvelope.log 2>&1
