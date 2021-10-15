@@ -29,6 +29,11 @@ let shareCodesHbInterval: string[] = [], shareCodesHb: string[] = [], shareCodes
     index = i + 1;
     console.log(`\n开始【京东账号${index}】${UserName}\n`);
 
+    if (except.includes(encodeURIComponent(UserName))) {
+      console.log('已设置跳过')
+      continue
+    }
+
     jxToken = await token(cookie);
     homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {
       isgift: 1,
