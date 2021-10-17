@@ -160,3 +160,7 @@
 0-23/2 * * * * cd /scripts && ts-node jd_track.ts >> /scripts/logs/jd_track.log 2>&1
 # 极速版-发财大赢家
 0 0,8,20 * * * cd /scripts && ts-node jd_speed_redEnvelope.ts >> /scripts/logs/jd_speed_redEnvelope.log 2>&1
+# 财富岛热气球挂后台
+10 0 * * * cd /scripts && ts-node jd_cfd_balloon.ts >> /scripts/logs/jd_cfd_balloon.log 2>&1
+# 财富岛捡贝壳挂后台
+10 0 * * * cd /scripts && ts-node jd_cfd_shell.ts >> /scripts/logs/jd_cfd_shell.log 2>&1
