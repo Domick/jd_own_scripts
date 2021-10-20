@@ -164,3 +164,5 @@
 10 0 * * * cd /scripts && ts-node jd_cfd_balloon.ts >> /scripts/logs/jd_cfd_balloon.log 2>&1
 # 财富岛捡贝壳挂后台
 10 0 * * * cd /scripts && ts-node jd_cfd_shell.ts >> /scripts/logs/jd_cfd_shell.log 2>&1
+# 城城领现金
+0 0-23/1 * * * cd /scripts && ts-node jd_city.ts >> /scripts/logs/jd_city.log 2>&1
