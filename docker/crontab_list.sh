@@ -166,3 +166,5 @@
 10 0 * * * cd /scripts && ts-node jd_cfd_shell.ts >> /scripts/logs/jd_cfd_shell.log 2>&1
 # 城城领现金
 0 0-23/1 * * * cd /scripts && ts-node jd_city.ts >> /scripts/logs/jd_city.log 2>&1
+# xtg
+56 * * * * cd /scripts && ts-node jd_xtg.ts >> /scripts/logs/jd_xtg.log 2>&1
