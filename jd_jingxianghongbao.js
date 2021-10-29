@@ -1,7 +1,7 @@
 /*
 京享红包
-jd_6ae695f3afcd8  可替换8处为自己ID
-https://u.jd.com/jd_6ae695f3afcd8
+3L9j2tP  可替换8处为自己ID
+https://u.jd.com/3L9j2tP
 0 0,12,18 * * *
 */
 
@@ -50,9 +50,9 @@ let nowTime = new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 
     }
   }
   if (message) {
-    $.msg($.name, ``, `${message}\nhttps://u.jd.com/jd_6ae695f3afcd8\n\n跳转到app 可查看助力情况`);
+    $.msg($.name, ``, `${message}\nhttps://u.jd.com/3L9j2tP\n\n跳转到app 可查看助力情况`);
     if ($.isNode()) {
-      await notify.sendNotify(`${$.name}`, `${message}\n\nhttps://u.jd.com/jd_6ae695f3afcd8\n跳转到app 可查看助力情况`);
+      await notify.sendNotify(`${$.name}`, `${message}\n\nhttps://u.jd.com/3L9j2tP\n跳转到app 可查看助力情况`);
     }
   }
 })()
@@ -109,7 +109,7 @@ async function run() {
 function getCoupons(shareId = '') {
   return new Promise(resolve => {
     let opts = {
-      url: `https://api.m.jd.com/api?functionId=getCoupons&appid=u&_=${Date.now()}&loginType=2&body={%22platform%22:4,%22unionActId%22:%2231134%22,%22actId%22:%22${$.actId}%22,%22d%22:%22jd_6ae695f3afcd8%22,%22unionShareId%22:%22${shareId}%22,%22type%22:1,%22eid%22:%22${$.eid}%22}&client=apple&clientVersion=8.3.6&h5st=undefined`,
+      url: `https://api.m.jd.com/api?functionId=getCoupons&appid=u&_=${Date.now()}&loginType=2&body={%22platform%22:4,%22unionActId%22:%2231134%22,%22actId%22:%22${$.actId}%22,%22d%22:%223L9j2tP%22,%22unionShareId%22:%22${shareId}%22,%22type%22:1,%22eid%22:%22${$.eid}%22}&client=apple&clientVersion=8.3.6&h5st=undefined`,
       headers: {
         "Accept-Language": "zh-cn",
         "Accept-Encoding": "gzip, deflate, br",
@@ -166,7 +166,7 @@ function getCoupons(shareId = '') {
 function shareUnionCoupon() {
   return new Promise(resolve => {
     let opts = {
-      url: `https://api.m.jd.com/api?functionId=shareUnionCoupon&appid=u&_=${Date.now()}&loginType=2&body={%22unionActId%22:%2231134%22,%22actId%22:%22${$.actId}%22,%22platform%22:4,%22unionShareId%22:%22${$.shareCode}%22,%22d%22:%22jd_6ae695f3afcd8%22,%22supportPic%22:2,%22supportLuckyCode%22:0,%22eid%22:%22${$.eid}%22}&client=apple&clientVersion=8.3.6`,
+      url: `https://api.m.jd.com/api?functionId=shareUnionCoupon&appid=u&_=${Date.now()}&loginType=2&body={%22unionActId%22:%2231134%22,%22actId%22:%22${$.actId}%22,%22platform%22:4,%22unionShareId%22:%22${$.shareCode}%22,%22d%22:%223L9j2tP%22,%22supportPic%22:2,%22supportLuckyCode%22:0,%22eid%22:%22${$.eid}%22}&client=apple&clientVersion=8.3.6`,
       headers: {
         "Accept-Language": "zh-cn",
         "Accept-Encoding": "gzip, deflate, br",
@@ -184,7 +184,7 @@ function shareUnionCoupon() {
           let res = $.toObj(data, data);
           if (typeof res == 'object') {
             if (res.code == 0 && res.data && res.data.shareUrl) {
-              $.shareCode = res.data.shareUrl.match(/jd_6ae695f3afcd8\?s=([^&]+)/) && res.data.shareUrl.match(/jd_6ae695f3afcd8\?s=([^&]+)/)[1] || ''
+              $.shareCode = res.data.shareUrl.match(/3L9j2tP\?s=([^&]+)/) && res.data.shareUrl.match(/3L9j2tP\?s=([^&]+)/)[1] || ''
               console.log('分享码:' + $.shareCode)
               if ($.shareCode) console.log(`以下账号会助力【京东账号${$.index}】${$.nickName || $.UserName}`)
             }
@@ -230,7 +230,7 @@ function getUrl1() {
 function getUrl() {
   return new Promise(resolve => {
     const options = {
-      url: `https://u.jd.com/jd_6ae695f3afcd8?s=${$.shareCode}`,
+      url: `https://u.jd.com/3L9j2tP?s=${$.shareCode}`,
       followRedirect: false,
       headers: {
         'Cookie': `${cookie} ${newCookie}`,
