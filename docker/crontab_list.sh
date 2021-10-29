@@ -168,3 +168,5 @@
 0 0-23/1 * * * cd /scripts && ts-node jd_city.ts >> /scripts/logs/jd_city.log 2>&1
 # xtg
 56 * * * * cd /scripts && ts-node jd_xtg.ts >> /scripts/logs/jd_xtg.log 2>&1
+# 京享红包
+0 0,12,18 * * * cd /scripts && ts-node jd_jingxianghongbao.ts >> /scripts/logs/jd_jingxianghongbao.log 2>&1
