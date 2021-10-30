@@ -170,3 +170,5 @@
 56 * * * * cd /scripts && ts-node jd_xtg.ts >> /scripts/logs/jd_xtg.log 2>&1
 # 京享红包
 0 0,12,18 * * * cd /scripts && ts-node jd_jingxianghongbao.ts >> /scripts/logs/jd_jingxianghongbao.log 2>&1
+# 领京豆-任务
+1 0,9,12 * * * cd /scripts && ts-node jd_bean_box.ts >> /scripts/logs/jd_bean_box.log 2>&1

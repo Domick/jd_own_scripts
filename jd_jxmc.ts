@@ -19,8 +19,6 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
   try {
     resetHosts();
   } catch (e) {
-    await sendNotify("脚本执行出错", "删除TS_USER_AGENT.js\n\n删js ! 不是ts !");
-    return;
   }
   await requestAlgo();
   let cookiesArr: any = await requireConfig();
@@ -38,12 +36,18 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
 
 
     jxToken = await token(cookie);
-    homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {
-      isgift: 1,
-      isquerypicksite: 1,
-      isqueryinviteicon: 1
-    })
-    console.log(JSON.stringify(homePageInfo))
+    homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {isgift: 1, isquerypicksite: 1, isqueryinviteicon: 1})
+    if (homePageInfo.data.maintaskId !== 'pause') {
+      console.log('init...')
+      for (let j = 0; j < 20; j++) {
+        res = await api('operservice/DoMainTask', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,step,timestamp', {step: homePageInfo.data.maintaskId})
+        if (res.data.maintaskId === 'pause')
+          break
+        await wait(2000)
+      }
+    }
+
+    homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {isgift: 1, isquerypicksite: 1, isqueryinviteicon: 1})
     let lastgettime: number
     if (homePageInfo.data?.cow?.lastgettime) {
       lastgettime = homePageInfo.data.cow.lastgettime
@@ -75,6 +79,14 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
 
     // 扭蛋机
     res = await api('queryservice/GetCardInfo', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp')
+    for (let card of res.data.cardinfo) {
+      console.log(`card ${card.cardtype}`, card.currnum, '/', card.neednum)
+      if (card.currnum >= card.neednum) {
+        console.log('可以兑换')
+        // TODO 兑换卡片
+        await sendNotify('牧场卡片可兑换', UserName)
+      }
+    }
     let drawTimes = res.data.times
     if (typeof drawTimes === "undefined") {
       await sendNotify("牧场扭蛋机错误", `账号${i + 1} ${UserName}\n手动建造扭蛋机`)
@@ -84,10 +96,13 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
       for (let j = 0; j < drawTimes; j++) {
         res = await api('operservice/DrawCard', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp')
         if (res.ret === 0) {
-          if (res.data.prizetype === 3)
+          if (res.data.prizetype === 3) {
             console.log('抽奖成功，金币：', res.data.addcoins)
-          else
+          } else if (res.data.prizetype === 1) {
+            console.log('抽奖成功，卡片：', res.data.cardtype)
+          } else {
             console.log('抽奖成功，其他：', res)
+          }
           await wait(4000)
         } else {
           console.log('抽奖失败:', res)
@@ -307,7 +322,8 @@ interface Params {
   isqueryinviteicon?: number,
   showAreaTaskFlag?: number,
   jxpp_wxapp_type?: number,
-  dateType?: string
+  dateType?: string,
+  step?: string,
 }
 
 async function getTask() {
@@ -411,8 +427,7 @@ function makeShareCodesHb(code: string) {
 
 async function getCodes() {
   try {
-    resetHosts()
-    let {data}: any = await axios.get('https://api.jdsharecode.xyz/api/HW_CODES', {timeout: 10000})
+    let {data}: any = await axios.get('https://api.jdsharecode.xyz/api/HW_CODES')
     shareCodesHW = data.jxmc || []
     shareCodesHbHw = data.jxmchb || []
   } catch (e) {
