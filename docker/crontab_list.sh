@@ -171,4 +171,8 @@
 # 京享红包
 0 0,12,18 * * * cd /scripts && ts-node jd_jingxianghongbao.ts >> /scripts/logs/jd_jingxianghongbao.log 2>&1
 # 领京豆-任务
-1 0,9,12 * * * cd /scripts && ts-node jd_bean_box.ts >> /scripts/logs/jd_bean_box.log 2>&1
+1 0,9,12,18 * * * cd /scripts && ts-node jd_bean_box.ts >> /scripts/logs/jd_bean_box.log 2>&1
+# 京喜-首页-牛牛福利
+1 0,9,19,23 * * * cd /scripts && ts-node jx_nnfls.ts >> /scripts/logs/jx_nnfls.log 2>&1
+# 领京豆额外奖励
+10 0,12,22 * * * node jd_bean_home.js >> /scripts/logs/jd_bean_home.log 2>&1
