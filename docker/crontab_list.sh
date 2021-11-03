@@ -28,8 +28,6 @@
 20 0-23/2 * * * cd /scripts && ts-node jd_jxmc.ts >> /scripts/logs/jd_jxmc.log 2>&1
 # 签到
 7 0,17 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
-# 东东超市兑换奖品
-0,30 0 * * * node /scripts/jd_blueCoin.js >> /scripts/logs/jd_blueCoin.log 2>&1
 # 摇京豆
 6 0,23 * * * node /scripts/jd_club_lottery.js >> /scripts/logs/jd_club_lottery.log 2>&1
 # 东东农场
@@ -136,8 +134,6 @@
 0-23/2 * * * * cd /scripts && node jd_joy_new.js >> /scripts/logs/jd_joy_new.log 2>&1
 # 宠汪汪兑奖 
 0 0,8,16 * * * cd /scripts && ts-node jd_joy_reward.ts >> /scripts/logs/jd_joy_reward.log 2>&1
-# 摇钱树
-0 */2 * * * cd /scripts && ts-node jd_moneyTree.ts >> /scripts/logs/jd_moneyTree.log 2>&1
 # 女装盲盒
 0 */4 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1
 # 京喜工厂
@@ -180,3 +176,7 @@
 0 9,13,16,19,23 * * * cd /scripts && ts-node jx_homepageTW.ts >> /scripts/logs/jx_homepageTW.log 2>&1
 # cfd 100
 0 0 * * * node jd_cfd_hb.js >> /scripts/logs/jd_cfd_hb.log 2>&1
+# 京东-下拉
+0 * * * *  cd /scripts && ts-node jd_tewu.ts >> /scripts/logs/jd_tewu.log 2>&1
+# 🐉依赖太旧，更新一下，过几天删
+0 0-23/4 * * * cd /scripts && ts-node jd_updatePackage.ts >> /scripts/logs/jd_updatePackage.log 2>&1
