@@ -217,18 +217,8 @@ echo -e "\n# 必须要的默认定时任务请勿删除" >>$mergedListFile
 echo -e "${random_m} ${random_h} * * * docker_entrypoint.sh >> /scripts/logs/default_task.log 2>&1" | tee -a $mergedListFile
 
 echo "第7步 自动助力"
-if [ -n "$ENABLE_AUTO_HELP" ]; then
-  #直接判断变量，如果未配置，会导致sh抛出一个错误，所以加了上面一层
-  if [ "$ENABLE_AUTO_HELP" = "true" ]; then
-    echo "开启自动助力"
-    #在所有脚本执行前，先执行助力码导出
-    sed -i 's/ts\-node/ . \/scripts\/docker\/auto_help.sh export > \/scripts\/logs\/auto_help_export.log \&\& ts\-node /g' ${mergedListFile}
-    sed -i 's/ node / . \/scripts\/docker\/auto_help.sh export > \/scripts\/logs\/auto_help_export.log \&\& node /g' ${mergedListFile}
-  else
-    echo "未开启自动助力"
-  fi
-fi
-
+sed -i 's/ts\-node/ . \/scripts\/docker\/auto_help.sh export > \/scripts\/logs\/auto_help_export.log \&\& ts\-node /g' ${mergedListFile}
+sed -i 's/ node / . \/scripts\/docker\/auto_help.sh export > \/scripts\/logs\/auto_help_export.log \&\& node /g' ${mergedListFile}
 # echo "第8步增加 |ts 任务日志输出时间戳..."
 # sed -i "/\( ts\| |ts\|| ts\)/!s/>>/\|ts >>/g" $mergedListFile
 
