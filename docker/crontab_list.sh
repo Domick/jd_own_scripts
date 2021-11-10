@@ -186,3 +186,5 @@
 # 0 * * * * node jd_facai.js >> /scripts/logs/jd_facai.log 2>&1
 # 京喜-88红包-宝箱
 5 0,6,12 * * * cd /scripts && ts-node jd_box.ts >> /scripts/logs/jd_box.log 2>&1
+# ifanli
+30 0,6,12 * * * cd /scripts && ts-node jd_ifanli.ts >> /scripts/logs/jd_ifanli.log 2>&1
