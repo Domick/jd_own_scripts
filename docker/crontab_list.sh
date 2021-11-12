@@ -141,7 +141,7 @@
 # 京喜工厂助力
 55 4,8,14 * * * node /scripts/jd_dreamFactory_help.js >> /scripts/logs/jd_dreamFactory_help.log 2>&1
 # 手机狂欢城
-0 0-18/6 * * * node /scripts/jd_carnivalcity.js >> /scripts/logs/jd_carnivalcity.log 2>&1
+5 0-18/6 * * * node /scripts/jd_carnivalcity.js >> /scripts/logs/jd_carnivalcity.log 2>&1
 # ddWorld
 30 */2 * * * cd /scripts && ts-node jd_ddWorld.ts >> /scripts/logs/jd_ddWorld.log 2>&1
 # 京东魔方
