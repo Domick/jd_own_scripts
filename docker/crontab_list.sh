@@ -130,8 +130,8 @@
 30 0,8,13,19 * * * cd /scripts && ts-node jd_fruit_moreTask.ts >> /scripts/logs/jd_fruit_moreTask.log 2>&1
 # 京东拼购？
 20 0,12,21 * * * cd /scripts && ts-node jd_IndustryLottery.ts >> /scripts/logs/jd_IndustryLottery.log 2>&1
-# 宠汪汪二代 每三小时喂一次
-0-23/2 * * * * cd /scripts && node jd_joy_new.js >> /scripts/logs/jd_joy_new.log 2>&1
+# # 宠汪汪二代 每三小时喂一次
+# 0-23/2 * * * * cd /scripts && node jd_joy_new.js >> /scripts/logs/jd_joy_new.log 2>&1
 # 宠汪汪兑奖 
 0 0,8,16 * * * cd /scripts && ts-node jd_joy_reward.ts >> /scripts/logs/jd_joy_reward.log 2>&1
 # 女装盲盒
@@ -188,3 +188,7 @@
 5 0,6,12 * * * cd /scripts && ts-node jd_box.ts >> /scripts/logs/jd_box.log 2>&1
 # ifanli
 30 0,6,12 * * * cd /scripts && ts-node jd_ifanli.ts >> /scripts/logs/jd_ifanli.log 2>&1
+# 每周质量报告
+0 0 * * 1 cd /scripts && ts-node jd_Last_Week_income.ts >> /scripts/logs/jd_Last_Week_income.log 2>&1
+# 宠汪汪三代目
+0 0-23/3 * * * cd /scripts && ts-node jd_joy_new.ts >> /scripts/logs/jd_joy_new.log 2>&1
