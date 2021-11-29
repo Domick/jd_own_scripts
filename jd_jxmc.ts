@@ -5,9 +5,8 @@
 
 import axios from 'axios'
 import {Md5} from "ts-md5"
-import * as path from 'path'
 import {sendNotify} from './sendNotify'
-import {requireConfig, getBeanShareCode, getFarmShareCode, wait, requestAlgo, h5st, exceptCookie, o2s} from './TS_USER_AGENTS'
+import {requireConfig, getBeanShareCode, getFarmShareCode, wait, requestAlgo, h5st, o2s} from './TS_USER_AGENTS'
 
 const token = require('./utils/jd_jxmc.js').token
 
@@ -17,26 +16,15 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
 !(async () => {
   await requestAlgo()
   let cookiesArr: any = await requireConfig()
-  if (process.argv[2]) {
-    console.log('收到命令行cookie')
-    cookiesArr = [decodeURIComponent(process.argv[2])]
-  }
-  let except: string[] = exceptCookie(path.basename(__filename))
-
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i]
     UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
     index = i + 1
     console.log(`\n开始【京东账号${index}】${UserName}\n`)
 
-    if (except.includes(encodeURIComponent(UserName))) {
-      console.log('已设置跳过')
-      continue
-    }
-
     jxToken = await token(cookie)
     homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {isgift: 1, isquerypicksite: 1, isqueryinviteicon: 1})
-    await wait(5000)
+    await wait(2000)
     if (homePageInfo.data.maintaskId !== 'pause') {
       console.log('init...')
       for (let j = 0; j < 20; j++) {
@@ -62,7 +50,6 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
       petids = homePageInfo.data.petinfo.map(pet => {
         return pet.petid
       })
-      await wait(20000)
       petNum = homePageInfo.data.petinfo.length
       coins = homePageInfo.data.coins
     } catch (e: any) {
@@ -82,7 +69,7 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
     console.log('蛋蛋🥚', homePageInfo.data.eggcnt)
     console.log('钱钱💰', coins)
     console.log('鸡鸡🐔', petNum)
-    await wait(5000)
+    await wait(3000)
 
     // 助农
     let tasks: any = await api('GetUserTaskStatusList', 'bizCode,dateType,jxpp_wxapp_type,showAreaTaskFlag,source', {dateType: '2', showAreaTaskFlag: 0, jxpp_wxapp_type: 7}, true)
@@ -127,11 +114,11 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
         res = await api('operservice/DrawCard', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp')
         if (res.ret === 0) {
           if (res.data.prizetype === 3) {
-            console.log('抽奖成功，金币：', res.data.addcoins)
+            console.log('抽奖成功，金币:', res.data.addcoins)
           } else if (res.data.prizetype === 1) {
-            console.log('抽奖成功，卡片：', res.data.cardtype)
+            console.log('抽奖成功，卡片:', res.data.cardtype)
           } else {
-            console.log('抽奖成功，其他：', res)
+            console.log('抽奖成功，其他:', res)
           }
           await wait(8000)
         } else {
@@ -187,11 +174,11 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
 
     // 登录领白菜
     res = await api('queryservice/GetVisitBackInfo', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp')
-    await wait(5000)
+    await wait(3000)
     if (res.iscandraw === 1) {
       res = await api('operservice/GetVisitBackCabbage', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp')
       if (res.ret === 0) {
-        console.log('登录领白菜：', res.data.drawnum)
+        console.log('登录领白菜:', res.data.drawnum)
       }
     }
     await wait(5000)
@@ -289,6 +276,7 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
   }
   await wait(5000)
 
+  /*
   for (let i = 0; i < cookiesArr.length; i++) {
     await getCodes()
     // 获取随机红包码
@@ -312,7 +300,7 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
         console.log('上限')
         break
       } else {
-        console.log('失败：', res)
+        console.log('失败:', res.message)
       }
       await wait(8000)
     }
@@ -337,11 +325,13 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
       if (res.ret === 0) {
         console.log('成功，获得:', res.data.addcoins)
       } else {
-        console.log('失败：', res)
+        console.log('失败:', res)
       }
       await wait(8000)
     }
   }
+
+   */
 })()
 
 interface Params {

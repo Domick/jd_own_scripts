@@ -10,7 +10,43 @@ import {Md5} from "ts-md5";
 import {differenceInMinutes, format} from "date-fns";
 import USER_AGENT, {requireConfig, wait, o2s} from './TS_USER_AGENTS'
 
+const JDJRValidator = require('./utils/jd_joy_validate').JDJRValidator
 let cookie: string = '', res: any = '', UserName: string, index: number, invokeKey = 'q8DNJdpcfRQ69gIx'
+let message: string
+
+function get(url: string, config: object) {
+  return new Promise((resolve, reject) => {
+    axios.get(url, config).then(async res => {
+      if (JSON.stringify(res.data).search('验证') > -1) {
+        let validateRes: any = await new JDJRValidator().run()
+        let validate: string = validateRes.validate
+        let data: any = await get(`${url}&validate=${validate}`, config)
+        resolve(data)
+      } else {
+        resolve(res.data)
+      }
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
+
+function post(url: string, body: string | object, config: object) {
+  return new Promise((resolve, reject) => {
+    axios.post(url, body, config).then(async res => {
+      if (JSON.stringify(res.data).search('验证') > -1) {
+        let validateRes: any = await new JDJRValidator().run()
+        let validate: string = validateRes.validate
+        let data: any = await post(`${url}&validate=${validate}`, body, config)
+        resolve(data)
+      } else {
+        resolve(res.data)
+      }
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
 
 !(async () => {
   let cookiesArr: any = await requireConfig()
@@ -35,7 +71,7 @@ let cookie: string = '', res: any = '', UserName: string, index: number, invokeK
         if (res.errorCode === 'feed_ok') {
           console.log('喂食成功', 80)
         } else {
-          console.log('喂食失败', res)
+          console.log('喂食失败', res.errorCode)
         }
       } else {
         console.log('feed间隔未满3小时，上次喂食', format(lastFeedTime, 'HH:mm:ss'))
@@ -58,6 +94,7 @@ let cookie: string = '', res: any = '', UserName: string, index: number, invokeK
         await wait(2000)
         if (!res.errorCode) {
           console.log('赛跑领奖成功', winCoin)
+          message += `【京东账号${index}】${UserName}\n赛跑领奖成功，获得${winCoin}积分\n\n`
         }
       } else if (res.data.petRaceResult === 'not_participate') {
         console.log('可参赛')
@@ -83,6 +120,7 @@ let cookie: string = '', res: any = '', UserName: string, index: number, invokeK
         console.log('赛跑已结束')
       } else if (res.data.petRaceResult === 'race_lose') {
         console.log('赛跑结果  输')
+        message += `【京东账号${index}】${UserName}\n赛跑结果：输\n\n`
       } else if (res.data.petRaceResult === 'unbegin') {
         console.log('赛跑未开始')
       } else {
@@ -147,7 +185,8 @@ let cookie: string = '', res: any = '', UserName: string, index: number, invokeK
         }
       }
     } catch (e) {
-      console.log('Error！手动打开app确认')
+      console.log(e)
+      console.log('Error! 手动打开app确认')
     }
   }
 })()
@@ -158,7 +197,7 @@ async function api(fn: string, taskType?: string, params?: string) {
   let url: string = taskType
     ? `https://jdjoy.jd.com/common/${fn}?reqSource=h5&invokeKey=${invokeKey}&taskType=${taskType}`
     : `https://jdjoy.jd.com/common/${fn}?reqSource=h5&invokeKey=${invokeKey}${params ?? ''}`
-  let {data} = await axios.get(url, {
+  res = await get(url, {
     headers: {
       'Host': 'jdjoy.jd.com',
       'Accept': '*/*',
@@ -172,13 +211,13 @@ async function api(fn: string, taskType?: string, params?: string) {
       'Cookie': cookie,
     }
   })
-  return data
+  return res
 }
 
 async function beforeFeed(fn: string = 'feed') {
   let lkt: number = Date.now()
   let lks: string = Md5.hashStr('' + invokeKey + lkt)
-  let {data} = await axios.get(`https://jdjoy.jd.com/common/pet/icon/click1?iconCode=${fn}&reqSource=h5&invokeKey=${invokeKey}`, {
+  res = await get(`https://jdjoy.jd.com/common/pet/icon/click1?iconCode=${fn}&reqSource=h5&invokeKey=${invokeKey}`, {
     headers: {
       'Host': 'jdjoy.jd.com',
       'lkt': lkt.toString(),
@@ -190,13 +229,13 @@ async function beforeFeed(fn: string = 'feed') {
       'Cookie': cookie
     }
   })
-  return data
+  return res
 }
 
 async function feed() {
   let lkt: number = Date.now()
   let lks: string = Md5.hashStr('' + invokeKey + lkt)
-  let {data} = await axios.get(`https://jdjoy.jd.com/common/pet/feed?feedCount=80&reqSource=h5&invokeKey=${invokeKey}`, {
+  res = await get(`https://jdjoy.jd.com/common/pet/feed?feedCount=80&reqSource=h5&invokeKey=${invokeKey}`, {
     headers: {
       'Host': 'jdjoy.jd.com',
       'lkt': lkt.toString(),
@@ -208,13 +247,13 @@ async function feed() {
       'Cookie': cookie
     }
   })
-  return data
+  return res
 }
 
 async function beforeTask(fn: string, linkAddr: string) {
   let lkt: number = Date.now()
   let lks: string = Md5.hashStr('' + invokeKey + lkt)
-  let {data}: any = await axios.get(`https://jdjoy.jd.com/common/pet/icon/click1?iconCode=${fn}&linkAddr=${linkAddr}&reqSource=h5&invokeKey=${invokeKey}`, {
+  res = await get(`https://jdjoy.jd.com/common/pet/icon/click1?iconCode=${fn}&linkAddr=${linkAddr}&reqSource=h5&invokeKey=${invokeKey}`, {
     headers: {
       'Host': 'jdjoy.jd.com',
       'Accept': '*/*',
@@ -229,15 +268,15 @@ async function beforeTask(fn: string, linkAddr: string) {
       'Cookie': cookie
     }
   })
-  if (data.errorCode) {
-    console.log(data.errorCode)
+  if (res.errorCode) {
+    console.log(res.errorCode)
   }
 }
 
 async function doTask(fn: string, body: object | string, params?: string) {
   let lkt: number = Date.now()
   let lks: string = Md5.hashStr('' + invokeKey + lkt)
-  let {data}: any = await axios.post(`https://jdjoy.jd.com/common/pet/${fn}?reqSource=h5&invokeKey=${invokeKey}${params ?? ''}`, typeof body === 'object' ? JSON.stringify(body) : body, {
+  res = await post(`https://jdjoy.jd.com/common/pet/${fn}?reqSource=h5&invokeKey=${invokeKey}${params ?? ''}`, typeof body === 'object' ? JSON.stringify(body) : body, {
     headers: {
       'Host': 'jdjoy.jd.com',
       'lkt': lkt.toString(),
@@ -250,10 +289,10 @@ async function doTask(fn: string, body: object | string, params?: string) {
       'Cookie': cookie
     },
   })
-  if (data.errorCode) {
-    console.log(data.errorCode)
+  if (res.errorCode) {
+    console.log(res.errorCode)
   }
-  return data
+  return res
 }
 
 async function click(iconCode: string, linkAddr?: string) {
@@ -262,7 +301,7 @@ async function click(iconCode: string, linkAddr?: string) {
   let url: string = linkAddr
     ? `https://jdjoy.jd.com/common/pet/icon/click?code=1624363341529274068136&iconCode=${iconCode}&linkAddr=${linkAddr}&reqSource=h5&invokeKey=${invokeKey}`
     : `https://jdjoy.jd.com/common/pet/icon/click?code=1624363341529274068136&iconCode=${iconCode}&reqSource=h5&invokeKey=${invokeKey}`
-  let {data} = await axios.get(url, {
+  res = await get(url, {
     headers: {
       'Host': 'jdjoy.jd.com',
       'Connection': 'keep-alive',
@@ -278,7 +317,7 @@ async function click(iconCode: string, linkAddr?: string) {
       'Cookie': cookie
     }
   })
-  if (data.errorCode) {
-    console.log(data.errorCode)
+  if (res.errorCode) {
+    console.log(res.errorCode)
   }
 }
