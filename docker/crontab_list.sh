@@ -192,3 +192,8 @@
 0 0 * * 1 cd /scripts && ts-node jd_Last_Week_income.ts >> /scripts/logs/jd_Last_Week_income.log 2>&1
 # 宠汪汪三代目
 0 0-23/3 * * * cd /scripts && ts-node jd_joy_new.ts >> /scripts/logs/jd_joy_new.log 2>&1
+# 京喜财富岛-合成游戏
+30 * * * * cd /scripts && ts-node jd_cfd_game.ts >> /scripts/logs/jd_cfd_game.log 2>&1
+# 京东-锦鲤红包
+# 做任务、助力、开红包
+5 0,6,18 * * * cd /scripts && ts-node jd_jinli_redpacket.ts >> /scripts/logs/jd_jinli_redpacket.log 2>&1
