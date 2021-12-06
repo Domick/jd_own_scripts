@@ -2,7 +2,7 @@ import axios from "axios"
 import {Md5} from "ts-md5"
 import {format} from 'date-fns'
 import * as dotenv from "dotenv"
-import {accessSync, readFileSync, writeFileSync} from "fs"
+import {existsSync, readFileSync, writeFileSync} from "fs"
 
 const CryptoJS = require('crypto-js')
 dotenv.config()
@@ -225,14 +225,15 @@ function getJxToken(cookie: string) {
 }
 
 function exceptCookie(filename: string = 'x.ts') {
-  let except: string[]
-  try {
-    accessSync('./utils/exceptCookie.json')
-    except = JSON.parse(readFileSync('./utils/exceptCookie.json').toString() || '{}')[filename] || []
-  } catch (e: any) {
-    except = []
+  let except: any
+  if (existsSync('./utils/exceptCookie.json')) {
+    try {
+      except = JSON.parse(readFileSync('./utils/exceptCookie.json').toString() || '{}')[filename] || []
+    } catch (e) {
+      console.log('./utils/exceptCookie.json JSON格式错误')
+      except = []
+    }
   }
-  console.log('except:', except)
   return except
 }
 
@@ -280,6 +281,24 @@ async function getshareCodeHW(key: string) {
   return shareCodeHW
 }
 
+async function getShareCodePool(key: string, num: number) {
+  let shareCode: string[] = []
+  for (let i = 0; i < 2; i++) {
+    try {
+      let {data}: any = await axios.get(`https://api.jdsharecode.xyz/api/${key}/${num}`)
+      shareCode = data.data || []
+      console.log(`随机获取${num}个${key}成功：${JSON.stringify(shareCode)}`)
+      if (shareCode.length !== 0) {
+        break
+      }
+    } catch (e) {
+      console.log("getShareCodePool Error, Retry...")
+      await wait(getRandomNumberByRange(2000, 6000))
+    }
+  }
+  return shareCode
+}
+
 export default USER_AGENT
 export {
   TotalBean,
@@ -297,5 +316,6 @@ export {
   resetHosts,
   o2s,
   randomNumString,
-  getshareCodeHW
+  getshareCodeHW,
+  getShareCodePool
 }

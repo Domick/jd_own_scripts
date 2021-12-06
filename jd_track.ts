@@ -6,9 +6,8 @@
 import axios from "axios"
 import * as path from "path"
 import {sendNotify} from './sendNotify'
-import {existsSync, readFileSync, writeFileSync} from "fs"
-import {requireConfig, exceptCookie, wait, o2s} from "./TS_USER_AGENTS"
-import {execSync} from "child_process";
+import {existsSync, mkdirSync, readFileSync, writeFileSync} from "fs"
+import USER_AGENT, {requireConfig, exceptCookie, wait} from "./TS_USER_AGENTS"
 
 let cookie: string = '', UserName: string, index: number, allMessage: string = '', res: any = '', message: string = ''
 
@@ -17,9 +16,14 @@ let cookie: string = '', UserName: string, index: number, allMessage: string = '
   let except: string[] = exceptCookie(path.basename(__filename))
   let orders: any = {}
   if (existsSync('./json')) {
-    orders = JSON.parse(readFileSync('./json/jd_track.json').toString() || '{}')
+    if (existsSync('./json/jd_track.json')) {
+      orders = JSON.parse(readFileSync('./json/jd_track.json').toString() || '{}')
+    } else {
+      writeFileSync('./json/jd_track.json', '{}')
+    }
   } else {
-    execSync('mkdir json')
+    mkdirSync('./json')
+    writeFileSync('./json/jd_track.json', '{}')
   }
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i]
@@ -80,7 +84,7 @@ async function getOrderList() {
   let {data} = await axios.get(`https://wq.jd.com/bases/orderlist/list?order_type=2&start_page=1&last_page=0&page_size=10&callersource=mainorder&t=${t}&sceneval=2&_=${t + 1}&sceneval=2`, {
     headers: {
       'authority': 'wq.jd.com',
-      'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+      'user-agent': USER_AGENT,
       'referer': 'https://wqs.jd.com/',
       'cookie': cookie
     }
@@ -92,7 +96,7 @@ async function getWuliu(orderId: string, orderType: string) {
   let {data} = await axios.get(`https://wq.jd.com/bases/wuliudetail/dealloglist?deal_id=${orderId}&orderstate=15&ordertype=${orderType}&t=${Date.now()}&sceneval=2`, {
     headers: {
       'authority': 'wq.jd.com',
-      'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+      'user-agent': USER_AGENT,
       'referer': 'https://wqs.jd.com/',
       'cookie': cookie
     }

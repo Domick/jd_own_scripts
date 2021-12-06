@@ -197,3 +197,7 @@
 # 京东-锦鲤红包
 # 做任务、助力、开红包
 5 0,6,18 * * * cd /scripts && ts-node jd_jinli_redpacket.ts >> /scripts/logs/jd_jinli_redpacket.log 2>&1
+# 金榜任务
+30 22,18 * * * cd /scripts && ts-node jd_jinbang1.ts >> /scripts/logs/jd_jinbang1.log 2>&1
+# 京东-锦鲤红包
+1 0,6,18 * * * cd /scripts && ts-node jd_jinli_hongbao.ts >> /scripts/logs/jd_jinli_hongbao.log 2>&1
