@@ -105,7 +105,7 @@
 #京东直播（又回来了）
 30-50/5 12,23 * * * node /scripts/jd_live.js >> /scripts/logs/jd_live.log 2>&1
 #京东健康社区
-13 1,6,22 * * * node /scripts/jd_health.js >> /scripts/logs/jd_health.log 2>&1
+35 0,6,18 * * * cd /scripts && ts-node /scripts/jd_health.ts >> /scripts/logs/jd_health.log 2>&1
 #京东健康社区收集健康能量
 5-45/20 * * * * node /scripts/jd_health_collect.js >> /scripts/logs/jd_health_collect.log 2>&1
 # 幸运大转盘
@@ -201,3 +201,7 @@
 30 22,18 * * * cd /scripts && ts-node jd_jinbang1.ts >> /scripts/logs/jd_jinbang1.log 2>&1
 # 京东-锦鲤红包
 1 0,6,18 * * * cd /scripts && ts-node jd_jinli_hongbao.ts >> /scripts/logs/jd_jinli_hongbao.log 2>&1
+# 金榜任务
+0 0,15 * * * cd /scripts && ts-node jd_splitHongbao.ts >> /scripts/logs/jd_splitHongbao.log 2>&1
+# 单独收牛牛
+0,30 * * * * cd /scripts && ts-node jd_jxmc_getCoin.ts >> /scripts/logs/jd_jxmc_getCoin.log 2>&1
