@@ -1,17 +1,17 @@
 /**
  * 京喜->领88元红包
  * 先内部，后助力HW.ts
- * cron: 5 0,6,18 * * *
+ * cron: 5 0,6,14 * * *
  */
 
-import {requireConfig, wait, h5st, getBeanShareCode, getFarmShareCode, getshareCodeHW, randomString, getShareCodePool} from "./TS_USER_AGENTS"
+import {requireConfig, wait, h5st, getBeanShareCode, getFarmShareCode, getshareCodeHW, randomString, getShareCodePool, o2s} from "./TS_USER_AGENTS"
 import axios from "axios"
 import {Md5} from "ts-md5"
 import {format} from 'date-fns'
 
 const token = require('./utils/jd_jxmc.js').token
 
-let cookie: string = '', res: any = '', UserName: string, index: number, UA: string = ''
+let cookie: string = '', res: any = '', UserName: string, UA: string = ''
 let shareCodeSelf: string[] = [], shareCode: string[] = [], shareCodeHW: string[] = [], shareCodePool: string[] = [], jxToken: any
 let HW_Priority: boolean = true
 /**
@@ -24,11 +24,10 @@ process.env.HW_Priority === 'false' ? HW_Priority = false : ''
 
 !(async () => {
   let cookiesArr: any = await requireConfig()
-  for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i]
+  for (let [index, value] of cookiesArr.entries()) {
+    cookie = value
     UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
-    index = i + 1
-    console.log(`\n开始【京东账号${index}】${UserName}\n`)
+    console.log(`\n开始【京东账号${index + 1}】${UserName}\n`)
     jxToken = await token(cookie)
 
     res = await api('GetUserInfo', 'activeId,channel,phoneid,publishFlag,stepreward_jstoken,timestamp,userDraw', {})
@@ -40,12 +39,12 @@ process.env.HW_Priority === 'false' ? HW_Priority = false : ''
     await wait(2000)
     res = await api('JoinActive', 'activeId,channel,phoneid,publishFlag,stepreward_jstoken,timestamp')
     res.iRet === 0 ? console.log('JoinActive: 成功') : console.log('JoinActive:', res.sErrMsg)
-    await wait(1000)
+    await wait(2000)
   }
 
   console.log('内部助力码：', shareCodeSelf)
-  for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i]
+  for (let [index, value] of cookiesArr.entries()) {
+    cookie = value
     UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
     jxToken = await token(cookie)
     shareCodePool = await getShareCodePool('hb88', 30)
@@ -53,11 +52,12 @@ process.env.HW_Priority === 'false' ? HW_Priority = false : ''
     if (shareCodeHW.length === 0) {
       shareCodeHW = await getshareCodeHW('88hb')
     }
-    if (i === 0 && HW_Priority) {
+    if (index === 0 && HW_Priority) {
       shareCode = Array.from(new Set([...shareCodeHW, ...shareCodeSelf, ...shareCodePool]))
     } else {
       shareCode = Array.from(new Set([...shareCodeSelf, ...shareCodePool, ...shareCodeHW]))
     }
+
     for (let code of shareCode) {
       console.log(`账号 ${UserName} 去助力 ${code}`)
       res = await api('EnrollFriend', 'activeId,channel,joinDate,phoneid,publishFlag,strPin,timestamp', {joinDate: format(Date.now(), 'yyyyMMdd'), strPin: code})
@@ -77,12 +77,11 @@ process.env.HW_Priority === 'false' ? HW_Priority = false : ''
   }
 
   // 拆红包
-  for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i]
+  for (let [index, value] of cookiesArr.entries()) {
+    cookie = value
     UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
     jxToken = await token(cookie)
-    index = i + 1
-    console.log(`\n开始【京东账号${index}】${UserName} 拆红包\n`)
+    console.log(`\n开始【京东账号${index + 1}】${UserName} 拆红包\n`)
 
     res = await api('GetUserInfo', 'activeId,channel,phoneid,publishFlag,stepreward_jstoken,timestamp,userDraw', {userDraw: 1})
     let strUserPin: string = res.Data.strUserPin, dwHelpedTimes: number = res.Data.dwHelpedTimes
