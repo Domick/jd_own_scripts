@@ -175,7 +175,7 @@
 # cfd 100
 0 0 * * * node jd_cfd_hb.js >> /scripts/logs/jd_cfd_hb.log 2>&1
 # 京东-下拉
-0 * * * *  cd /scripts && ts-node jd_tewu.ts >> /scripts/logs/jd_tewu.log 2>&1
+# 0 * * * *  cd /scripts && ts-node jd_tewu.ts >> /scripts/logs/jd_tewu.log 2>&1
 # 🐉依赖太旧，更新一下，过几天删
 0 0-23/4 * * * cd /scripts && ts-node jd_updatePackage.ts >> /scripts/logs/jd_updatePackage.log 2>&1
 # 赚京豆
@@ -189,7 +189,7 @@
 # 每周质量报告
 0 0 * * 1 cd /scripts && ts-node jd_Last_Week_income.ts >> /scripts/logs/jd_Last_Week_income.log 2>&1
 # 宠汪汪三代目
-0 0-23/3 * * * cd /scripts && ts-node jd_joy_new.ts >> /scripts/logs/jd_joy_new.log 2>&1
+# 0 0-23/3 * * * cd /scripts && ts-node jd_joy_new.ts >> /scripts/logs/jd_joy_new.log 2>&1
 # 京喜财富岛-合成游戏
 30 * * * * cd /scripts && ts-node jd_cfd_game.ts >> /scripts/logs/jd_cfd_game.log 2>&1
 # 京东-锦鲤红包
