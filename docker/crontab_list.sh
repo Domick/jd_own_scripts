@@ -159,7 +159,7 @@
 # 财富岛捡贝壳挂后台
 10 0 * * * cd /scripts && ts-node jd_cfd_shell.ts >> /scripts/logs/jd_cfd_shell.log 2>&1
 # 城城领现金
-0 0-23/1 * * * cd /scripts && ts-node jd_city.ts >> /scripts/logs/jd_city.log 2>&1
+# 0 0-23/1 * * * cd /scripts && ts-node jd_city.ts >> /scripts/logs/jd_city.log 2>&1
 # xtg
 56 * * * * cd /scripts && ts-node jd_xtg.ts >> /scripts/logs/jd_xtg.log 2>&1
 # 京享红包
@@ -203,3 +203,5 @@
 0 0,15 * * * cd /scripts && ts-node jd_splitHongbao.ts >> /scripts/logs/jd_splitHongbao.log 2>&1
 # 单独收牛牛
 0,30 * * * * cd /scripts && ts-node jd_jxmc_getCoin.ts >> /scripts/logs/jd_jxmc_getCoin.log 2>&1
+# city2.0
+0 0-23/1 * * * cd /scripts && ts-node jd_city1.ts >> /scripts/logs/jd_city1.log 2>&1
