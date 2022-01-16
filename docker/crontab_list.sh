@@ -205,3 +205,5 @@
 0,30 * * * * cd /scripts && ts-node jd_jxmc_getCoin.ts >> /scripts/logs/jd_jxmc_getCoin.log 2>&1
 # city2.0
 0 0-23/1 * * * cd /scripts && ts-node jd_city1.ts >> /scripts/logs/jd_city1.log 2>&1
+# 京东-萌虎摇摇乐
+0 0,9,16 * * * cd /scripts && ts-node jd_tiger.ts >> /scripts/logs/jd_tiger.log 2>&1
