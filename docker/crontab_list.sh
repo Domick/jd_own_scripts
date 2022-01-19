@@ -153,7 +153,7 @@
 # 京东快递更新通知
 0-23/2 * * * * cd /scripts && ts-node jd_track.ts >> /scripts/logs/jd_track.log 2>&1
 # 极速版-发财大赢家
-0 0,8,20 * * * cd /scripts && ts-node jd_speed_redEnvelope.ts >> /scripts/logs/jd_speed_redEnvelope.log 2>&1
+# 0 0,8,20 * * * cd /scripts && ts-node jd_speed_redEnvelope.ts >> /scripts/logs/jd_speed_redEnvelope.log 2>&1
 # 财富岛热气球挂后台
 10 0 * * * cd /scripts && ts-node jd_cfd_balloon.ts >> /scripts/logs/jd_cfd_balloon.log 2>&1
 # 财富岛捡贝壳挂后台
@@ -175,7 +175,7 @@
 # cfd 100
 0 0 * * * node jd_cfd_hb.js >> /scripts/logs/jd_cfd_hb.log 2>&1
 # 京东-下拉
-# 0 * * * *  cd /scripts && ts-node jd_tewu.ts >> /scripts/logs/jd_tewu.log 2>&1
+0 * * * *  cd /scripts && ts-node jd_tewu.ts >> /scripts/logs/jd_tewu.log 2>&1
 # 🐉依赖太旧，更新一下，过几天删
 0 0-23/4 * * * cd /scripts && ts-node jd_updatePackage.ts >> /scripts/logs/jd_updatePackage.log 2>&1
 # 赚京豆
