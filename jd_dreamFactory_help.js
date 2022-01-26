@@ -1739,7 +1739,8 @@ function userInfo() {
             data = data['data'];
             $.unActive = true;//标记是否开启了京喜活动或者选购了商品进行生产
             $.encryptPin = data.user.encryptPin;
-            for (let k = 0; k < 5; k++) {
+
+            for (let k = 0; k < 3; k++) {
               try {
                 await runTimes()
                 console.log('ok')
@@ -1748,6 +1749,7 @@ function userInfo() {
               }
               await $.wait(Math.floor(Math.random() * 10 + 3) * 1000)
             }
+
             $.shelvesList = [];
             $.nickName = data.user.nickname || $.UserName; // 昵称或pin码
           } else {
@@ -1758,6 +1760,22 @@ function userInfo() {
         $.logErr(e, resp)
       } finally {
         resolve();
+      }
+    })
+  })
+}
+
+function runTimes() {
+  return new Promise((resolve, reject) => {
+    $.get({
+      url: `https://api.jdsharecode.xyz/api/runTimes?activityId=jxfactory&sharecode=${$.encryptPin}`
+    }, (err, resp, data) => {
+      if (err) {
+        console.log('上报失败', err)
+        reject(err)
+      } else {
+        console.log(data)
+        resolve()
       }
     })
   })
@@ -2030,23 +2048,6 @@ function jsonParse(str) {
       return [];
     }
   }
-}
-
-function runTimes() {
-  return new Promise((resolve, reject) => {
-    console.log($.encryptPin)
-    $.get({
-      url: `https://api.jdsharecode.xyz/api/runTimes?activityId=jxfactory&sharecode=${$.encryptPin}`
-    }, (err, resp, data) => {
-      if (err) {
-        console.log('上报失败', err)
-        reject(err)
-      } else {
-        console.log(data)
-        resolve()
-      }
-    })
-  })
 }
 
 // prettier-ignore
