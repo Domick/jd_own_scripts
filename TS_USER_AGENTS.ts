@@ -98,7 +98,7 @@ async function getFarmShareCode(cookie: string) {
     return ''
 }
 
-async function requireConfig(index: number = -1) {
+async function requireConfig(index: number = -1): Promise<string[]> {
   let cookiesArr: string[] = []
   const jdCookieNode = require('./jdCookie.js')
   Object.keys(jdCookieNode).forEach((item) => {
@@ -211,6 +211,7 @@ function getJxToken(cookie: string, phoneId: string = '') {
     }
     return res
   }
+
   if (!phoneId)
     phoneId = generateStr(40)
   let timestamp = Date.now().toString()
@@ -262,9 +263,13 @@ function randomNumString(e: number) {
   return n
 }
 
-function randomWord() {
+function randomWord(n: number = 1) {
   let t = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', a = t.length
-  return t.charAt(Math.floor(Math.random() * a))
+  let rnd: string = ''
+  for (let i = 0; i < n; i++) {
+    rnd += t.charAt(Math.floor(Math.random() * a))
+  }
+  return rnd
 }
 
 async function getshareCodeHW(key: string) {

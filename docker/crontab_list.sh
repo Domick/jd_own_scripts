@@ -22,7 +22,7 @@
 #京喜领88元红包(6.31到期)
 # 30 1,6,12,21 * * * node /scripts/jd_jxlhb.js >> /scripts/logs/jd_jxlhb.log 2>&1
 #省钱大赢家之翻翻乐
-10,40 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
+# 10,40 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
 ##############长期活动##############
 #京喜牧场
 25 0-23/2 * * * cd /scripts && ts-node jd_jxmc.ts >> /scripts/logs/jd_jxmc.log 2>&1
@@ -41,7 +41,7 @@
 # 京东全民开红包
 12 0-23/4 * * * node /scripts/jd_redPacket.js >> /scripts/logs/jd_redPacket.log 2>&1
 # 进店领豆
-6 0 * * * node /scripts/jd_shop.js >> /scripts/logs/jd_shop.log 2>&1
+# 6 0 * * * node /scripts/jd_shop.js >> /scripts/logs/jd_shop.log 2>&1
 # 东东超市
 31 0,1-23/2 * * * node /scripts/jd_superMarket.js >> /scripts/logs/jd_superMarket.log 2>&1
 # 取关京东店铺商品
@@ -67,7 +67,7 @@
 # 京东快递签到
 47 1 * * * node /scripts/jd_kd.js >> /scripts/logs/jd_kd.log 2>&1
 # 京东汽车(签到满500赛点可兑换500京豆)
-0 0 * * * node /scripts/jd_car.js >> /scripts/logs/jd_car.log 2>&1
+# 0 0 * * * node /scripts/jd_car.js >> /scripts/logs/jd_car.log 2>&1
 # 领京豆额外奖励(每日可获得3京豆)
 23 1,12,22 * * * node /scripts/jd_bean_home.js >> /scripts/logs/jd_bean_home.log 2>&1
 # 微信小程序京东赚赚
@@ -75,7 +75,7 @@
 # crazyJoy自动每日任务
 30 7,23 * * * node /scripts/jd_crazy_joy.js >> /scripts/logs/jd_crazy_joy.log 2>&1
 # 京东汽车旅程赛点兑换金豆
-0 0 * * * node /scripts/jd_car_exchange.js >> /scripts/logs/jd_car_exchange.log 2>&1
+# 0 0 * * * node /scripts/jd_car_exchange.js >> /scripts/logs/jd_car_exchange.log 2>&1
 # 导到所有互助码
 23 7 * * * node /scripts/jd_get_share_code.js >> /scripts/logs/jd_get_share_code.log 2>&1
 # 口袋书店
@@ -179,7 +179,7 @@
 # 🐉依赖太旧，更新一下，过几天删
 0 0-23/4 * * * cd /scripts && ts-node jd_updatePackage.ts >> /scripts/logs/jd_updatePackage.log 2>&1
 # 赚京豆
-5 0,7,22 * * * node jd_zjd.js >> /scripts/logs/jd_zjd.log 2>&1
+15 0,1,23 * * * cd /scripts && ts-node jd_zjd.ts >> /scripts/logs/jd_zjd.log 2>&1
 # 发财大赢家助力火爆
 # 0 * * * * node jd_facai.js >> /scripts/logs/jd_facai.log 2>&1
 # 京喜-88红包-宝箱
@@ -206,4 +206,6 @@
 # city2.0
 0 0-23/1 * * * cd /scripts && ts-node jd_city1.ts >> /scripts/logs/jd_city1.log 2>&1
 # 京东-萌虎摇摇乐
-0 0,9,16 * * * cd /scripts && ts-node jd_tiger.ts >> /scripts/logs/jd_tiger.log 2>&1
+# 0 0,9,16 * * * cd /scripts && ts-node jd_tiger.ts >> /scripts/logs/jd_tiger.log 2>&1
+# 京东汽车
+15 1 * * * cd /scripts && ts-node jd_car.ts >> /scripts/logs/jd_car.log 2>&1

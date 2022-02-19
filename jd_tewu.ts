@@ -47,17 +47,17 @@ let cookie: string = '', UserName: string = '', res: any = '', message: string =
         }
 
         // 下拉
-        if (t.ext?.sign2) {
-          try {
-            if (new Date().getHours() >= 14 && new Date().getHours() <= 20) {
-              res = await api('superBrandDoTask', {"source": "secondfloor", "activityId": activityId, "encryptProjectId": encryptProjectId, "encryptAssignmentId": t.encryptAssignmentId, "assignmentType": t.assignmentType, "itemId": t.ext.sign2[0].itemId, "actionType": 0})
-              console.log(res.data?.bizMsg)
-              await wait(2000)
-            }
-          } catch (e) {
-            console.log(t.ext?.sign2)
-          }
-        }
+        // if (t.ext?.sign2) {
+        //   try {
+        //     if (new Date().getHours() >= 14 && new Date().getHours() <= 20) {
+        //       res = await api('superBrandDoTask', {"source": "secondfloor", "activityId": activityId, "encryptProjectId": encryptProjectId, "encryptAssignmentId": t.encryptAssignmentId, "assignmentType": t.assignmentType, "itemId": t.ext.sign2[0].itemId, "actionType": 0})
+        //       console.log(res.data?.bizMsg)
+        //       await wait(2000)
+        //     }
+        //   } catch (e) {
+        //     console.log(t.ext?.sign2)
+        //   }
+        // }
       }
 
       // 助力码
@@ -74,7 +74,7 @@ let cookie: string = '', UserName: string = '', res: any = '', message: string =
     }
 
     // 抽奖
-    if (new Date().getHours() === 22) {
+    if (new Date().getHours() === 23) {
       let sum: number = 0
       res = await api('superBrandSecondFloorMainPage', {"source": "secondfloor"})
       let userStarNum: number = res.data.result.activityUserInfo.userStarNum
@@ -90,7 +90,10 @@ let cookie: string = '', UserName: string = '', res: any = '', message: string =
       message += `【京东账号${index + 1}】${UserName}\n抽奖${userStarNum}次，获得京豆${sum}\n\n`
     }
   }
-  await sendNotify('京东-下拉', message)
+  // await sendNotify('京东-下拉', message)
+
+  console.log(shareCodesSelf)
+  await wait(3000)
 
   shareCodesHW = await getshareCodeHW('tewu')
   shareCodes = [...shareCodesSelf, ...shareCodesHW]
