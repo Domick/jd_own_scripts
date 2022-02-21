@@ -19,6 +19,9 @@
  * 东东农场 = type=cron,script-path=jd_fruit.js, cronexpr="5 6-18/6 * * *", timeout=3600, enable=true
  *
  * jd免费水果 搬的https://github.com/liuxiaoyucc/jd-helper/blob/a6f275d9785748014fc6cca821e58427162e9336/fruit/fruit.js
+ * 每号间隔（毫秒），默认0毫秒（0分钟）
+ * export fruit_sleep=300000
+ *
  */
 
 const $ = new Env('东东农场');
@@ -35,10 +38,6 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://h5.m.jd.com/babelDiy/Zeus/3KSjXqQabiTuD1cJ28QskrpWoBKT/index.html%22%20%7D`;
 !(async () => {
   await requireConfig();
-  if (!cookiesArr[0]) {
-    $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-    return;
-  }
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -51,6 +50,13 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
       option = {};
       await shareCodesFormat();
       await jdFruit();
+    }
+    if ($.isNode() && process.env.fruit_sleep) {
+      try {
+        await $.wait(Number(process.env.fruit_sleep))
+      } catch (e) {
+        $.logErr("process.env.fruit_sleep value error")
+      }
     }
   }
   if ($.isNode() && allMessage && $.ctrTemp) {
@@ -108,12 +114,7 @@ async function jdFruit() {
       await getTenWaterAward();//领取10浇水奖励
       await getWaterFriendGotAward();//领取为2好友浇水奖励
       await duck();
-      if (!process.env.DO_TEN_WATER_AGAIN) {
-        console.log('执行再次浇水')
-        await doTenWaterAgain();//再次浇水
-      } else {
-        console.log('不执行再次浇水，攒水滴')
-      }
+      // await doTenWaterAgain();//再次浇水
       await predictionFruit();//预测水果成熟时间
     } else {
       console.log(`初始化农场数据异常, 请登录京东 app查看农场0元水果功能是否正常,农场初始化数据: ${JSON.stringify($.farmInfo)}`);
@@ -246,7 +247,7 @@ async function predictionFruit() {
   let waterEveryDayT = $.farmTask.totalWaterTaskInit.totalWaterTaskTimes;//今天到到目前为止，浇了多少次水
   message += `【今日共浇水】${waterEveryDayT}次\n`;
   message += `【剩余 水滴】${$.farmInfo.farmUserPro.totalEnergy}g💧\n`;
-  message += `【水果🍉进度】${(($.farmInfo.farmUserPro.treeEnergy / $.farmInfo.farmUserPro.treeTotalEnergy) * 100).toFixed(2)}%，已浇水${$.farmInfo.farmUserPro.treeEnergy / 10}次,还需${($.farmInfo.farmUserPro.treeTotalEnergy - $.farmInfo.farmUserPro.treeEnergy) / 10}次\n`
+  message += `【水果🍉进度】${$.farmInfo.farmUserPro.treeEnergy / 10} / ${$.farmInfo.farmUserPro.treeTotalEnergy / 10}，剩余${($.farmInfo.farmUserPro.treeTotalEnergy - $.farmInfo.farmUserPro.treeEnergy) / 10}次\n`
   if ($.farmInfo.toFlowTimes > ($.farmInfo.farmUserPro.treeEnergy / 10)) {
     message += `【开花进度】再浇水${$.farmInfo.toFlowTimes - $.farmInfo.farmUserPro.treeEnergy / 10}次开花\n`
   } else if ($.farmInfo.toFruitTimes > ($.farmInfo.farmUserPro.treeEnergy / 10)) {
@@ -594,6 +595,7 @@ async function getExtraAward() {
           let vo = $.farmAssistResult.assistStageList[key]
           if (vo.stageStaus === 2) {
             await receiveStageEnergy()
+            await $.wait(3000)
             if ($.receiveStageEnergy.code === "0") {
               console.log(`已成功领取第${key + 1}阶段好友助力奖励：【${$.receiveStageEnergy.amount}】g水`)
               num += $.receiveStageEnergy.amount
