@@ -1,10 +1,9 @@
 import axios from "axios"
 import {Md5} from "ts-md5"
-import {format} from 'date-fns'
 import * as dotenv from "dotenv"
-import {existsSync, readFileSync, writeFileSync} from "fs"
+import {existsSync, readFileSync} from "fs"
+import {sendNotify} from './sendNotify'
 
-const CryptoJS = require('crypto-js')
 dotenv.config()
 
 let fingerprint: string | number, token: string = '', enCryptMethodJD: any
@@ -98,19 +97,43 @@ async function getFarmShareCode(cookie: string) {
     return ''
 }
 
-async function requireConfig(index: number = -1): Promise<string[]> {
+async function requireConfig(check: boolean = false): Promise<string[]> {
   let cookiesArr: string[] = []
   const jdCookieNode = require('./jdCookie.js')
-  Object.keys(jdCookieNode).forEach((item) => {
-    if (jdCookieNode[item]) {
-      cookiesArr.push(jdCookieNode[item])
+  let keys: string[] = Object.keys(jdCookieNode)
+  for (let i = 0; i < keys.length; i++) {
+    let cookie = jdCookieNode[keys[i]]
+    if (!check) {
+      cookiesArr.push(cookie)
+    } else {
+      if (await checkCookie(cookie)) {
+        cookiesArr.push(cookie)
+      } else {
+        let username = decodeURIComponent(jdCookieNode[keys[i]].match(/pt_pin=([^;]*)/)![1])
+        console.log('Cookie失效', username)
+        await sendNotify('Cookie失效', '【京东账号】' + username)
+      }
     }
-  })
+  }
   console.log(`共${cookiesArr.length}个京东账号\n`)
-  if (index != -1) {
-    return [cookiesArr[index]]
-  } else {
-    return cookiesArr
+  return cookiesArr
+}
+
+async function checkCookie(cookie) {
+  await wait(1000)
+  try {
+    let {data}: any = await axios.get(`https://api.m.jd.com/client.action?functionId=GetJDUserInfoUnion&appid=jd-cphdeveloper-m&body=${encodeURIComponent(JSON.stringify({"orgFlag": "JD_PinGou_New", "callSource": "mainorder", "channel": 4, "isHomewhite": 0, "sceneval": 2}))}&loginType=2&_=${Date.now()}&sceneval=2&g_login_type=1&callback=GetJDUserInfoUnion&g_ty=ls`, {
+      headers: {
+        'authority': 'api.m.jd.com',
+        'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1',
+        'referer': 'https://home.m.jd.com/',
+        'cookie': cookie
+      }
+    })
+    data = JSON.parse(data.match(/GetJDUserInfoUnion\((.*)\)/)[1])
+    return data.retcode === '0';
+  } catch (e) {
+    return false
   }
 }
 
@@ -167,41 +190,6 @@ function generateFp() {
   return (i + Date.now()).slice(0, 16)
 }
 
-function getQueryString(url: string, name: string) {
-  let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i")
-  let r = url.split('?')[1].match(reg)
-  if (r != null) return decodeURIComponent(r[2])
-  return ''
-}
-
-function decrypt(stk: string, url: string, appId: number) {
-  const timestamp = (format(new Date(), 'yyyyMMddhhmmssSSS'))
-  let hash1: string
-  if (fingerprint && token && enCryptMethodJD) {
-    hash1 = enCryptMethodJD(token, fingerprint.toString(), timestamp.toString(), appId.toString(), CryptoJS).toString(CryptoJS.enc.Hex)
-  } else {
-    const random = '5gkjB6SpmC9s'
-    token = `tk01wcdf61cb3a8nYUtHcmhSUFFCfddDPRvKvYaMjHkxo6Aj7dhzO+GXGFa9nPXfcgT+mULoF1b1YIS1ghvSlbwhE0Xc`
-    fingerprint = 9686767825751161
-    const str = `${token}${fingerprint}${timestamp}${appId}${random}`
-    hash1 = CryptoJS.SHA512(str, token).toString(CryptoJS.enc.Hex)
-  }
-  let st: string = ''
-  stk.split(',').map((item, index) => {
-    st += `${item}:${getQueryString(url, item)}${index === stk.split(',').length - 1 ? '' : '&'}`
-  })
-  const hash2 = CryptoJS.HmacSHA256(st, hash1.toString()).toString(CryptoJS.enc.Hex)
-  return encodeURIComponent(["".concat(timestamp.toString()), "".concat(fingerprint.toString()), "".concat(appId.toString()), "".concat(token), "".concat(hash2)].join(";"))
-}
-
-function h5st(url: string, stk: string, params: object, appId: number = 10032) {
-  for (const [key, val] of Object.entries(params)) {
-    url += `&${key}=${val}`
-  }
-  url += '&h5st=' + decrypt(stk, url, appId)
-  return url
-}
-
 function getJxToken(cookie: string, phoneId: string = '') {
   function generateStr(input: number) {
     let src = 'abcdefghijklmnopqrstuvwxyz1234567890'
@@ -242,13 +230,6 @@ function randomString(e: number, word?: number) {
   for (let i = 0; i < e; i++)
     n += t.charAt(Math.floor(Math.random() * a))
   return n
-}
-
-function resetHosts() {
-  try {
-    writeFileSync('/etc/hosts', '')
-  } catch (e) {
-  }
 }
 
 function o2s(arr: object, title: string = '') {
@@ -307,7 +288,7 @@ async function getShareCodePool(key: string, num: number) {
   return shareCode
 }
 
-async function wechat_app_msg(title: string, content: string, user: string) {
+/*async function wechat_app_msg(title: string, content: string, user: string) {
   let corpid: string = "", corpsecret: string = ""
   let {data: gettoken} = await axios.get(`https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${corpid}&corpsecret=${corpsecret}`)
   let access_token: string = gettoken.access_token
@@ -326,7 +307,7 @@ async function wechat_app_msg(title: string, content: string, user: string) {
   } else {
     console.log('企业微信应用消息发送失败', send)
   }
-}
+}*/
 
 function obj2str(obj: object) {
   return JSON.stringify(obj)
@@ -359,6 +340,33 @@ async function jdpingou() {
   return `jdpingou;iPhone;5.19.0;${version};${randomString(40)};network/wifi;model/${device};appBuild/100833;ADID/;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/0;hasOCPay/0;supportBestPay/0;session/${getRandomNumberByRange(10, 90)};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
 }
 
+function get(url: string, prarms?: string, headers?: any) {
+  return axios.get(url, {
+    params: prarms,
+    headers: headers
+  })
+    .then(res => {
+      if (typeof res.data === 'string' && res.data.match(/^jsonpCBK/)) {
+        return JSON.parse(res.data.match(/jsonpCBK.?\(([\w\W]*)\);/)[1])
+      } else {
+        return res.data
+      }
+    })
+    .catch(err => {
+      console.log(err?.response?.status, err?.response?.statusText)
+    });
+}
+
+function post(url: string, prarms?: string | object, headers?: any): Promise<any> {
+  return axios.post(url, prarms, {
+    headers: headers
+  })
+    .then(res => res.data)
+    .catch(err => {
+      console.log(err?.response?.status, err?.response?.statusText)
+    });
+}
+
 export default USER_AGENT
 export {
   TotalBean,
@@ -368,18 +376,16 @@ export {
   wait,
   getRandomNumberByRange,
   requestAlgo,
-  decrypt,
   getJxToken,
-  h5st,
   exceptCookie,
   randomString,
-  resetHosts,
   o2s,
   randomNumString,
   getshareCodeHW,
   getShareCodePool,
   randomWord,
-  wechat_app_msg,
   obj2str,
-  jdpingou
+  jdpingou,
+  get,
+  post
 }

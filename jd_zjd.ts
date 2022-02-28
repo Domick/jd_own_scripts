@@ -6,7 +6,7 @@
  */
 
 import axios from 'axios'
-import {getshareCodeHW, o2s, requireConfig, wait} from './TS_USER_AGENTS'
+import {post, getshareCodeHW, o2s, requireConfig, wait} from './TS_USER_AGENTS'
 import {requestAlgo} from "./utils/V3";
 import {init, zjdTool} from "./utils/zjd";
 
@@ -59,19 +59,21 @@ interface Tuan {
           await wait(1000)
         }
       } else if (res.data.assistedRecords.length === res.data.assistNum) {
-        console.log('已成团')
-        res = await api('vvipclub_distributeBean_startAssist', {"activityIdEncrypted": res.data.id, "channel": "FISSION_BEAN"})
-        console.log('4', res)
-        await wait(2000)
-        if (res.success) {
-          console.log(`开团成功，结束时间：${res.data.endTime}`)
-          res = await api('distributeBeanActivityInfo', {"paramData": {"channel": "FISSION_BEAN"}})
-          shareCodeSelf.push({
-            activityIdEncrypted: res.data.id,
-            assistStartRecordId: res.data.assistStartRecordId,
-            assistedPinEncrypted: res.data.encPin,
-          })
-          await wait(1000)
+        console.log('已成团', JSON.stringify(res))
+        if (res.data.canStartNewAssist) {
+          res = await api('vvipclub_distributeBean_startAssist', {"activityIdEncrypted": res.data.id, "channel": "FISSION_BEAN"})
+          console.log('4', res)
+          await wait(2000)
+          if (res.success) {
+            console.log(`开团成功，结束时间：${res.data.endTime}`)
+            res = await api('distributeBeanActivityInfo', {"paramData": {"channel": "FISSION_BEAN"}})
+            shareCodeSelf.push({
+              activityIdEncrypted: res.data.id,
+              assistStartRecordId: res.data.assistStartRecordId,
+              assistedPinEncrypted: res.data.encPin,
+            })
+            await wait(1000)
+          }
         }
       } else if (!res.data.canStartNewAssist) {
         console.log('不可开团')
@@ -131,15 +133,13 @@ async function api(fn: string, params: any) {
   } else {
     h5st = zjdTool(params)
   }
-  let {data} = await axios.post(`https://api.m.jd.com/api?functionId=${fn}&fromType=wxapp&timestamp=${Date.now()}`,
-    `body=${decodeURIComponent(JSON.stringify(params))}&appid=swat_miniprogram&h5st=${h5st}&client=tjj_m&clientVersion=3.1.3`, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; Charset=UTF-8",
-        "Host": "api.m.jd.com",
-        "Referer": "https://servicewechat.com/wxa5bf5ee667d91626/182/page-frame.html",
-        "Cookie": cookie,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat',
-      }
+  return await post(`https://api.m.jd.com/api?functionId=${fn}&fromType=wxapp&timestamp=${Date.now()}`,
+    `body=${decodeURIComponent(JSON.stringify(params))}&appid=swat_miniprogram&h5st=${h5st}&client=tjj_m&clientVersion=3.1.3`,
+    {
+      "Content-Type": "application/x-www-form-urlencoded; Charset=UTF-8",
+      "Host": "api.m.jd.com",
+      "Referer": "https://servicewechat.com/wxa5bf5ee667d91626/182/page-frame.html",
+      "Cookie": cookie,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat',
     })
-  return data
 }
