@@ -31,7 +31,7 @@
 # 摇京豆
 6 0,23 * * * node /scripts/jd_club_lottery.js >> /scripts/logs/jd_club_lottery.log 2>&1
 # 东东农场
-15 6-18/6 * * * node /scripts/jd_fruit.js >> /scripts/logs/jd_fruit.log 2>&1
+15 6-18/6 * * * cd /scripts && ts-node fruit.ts >> /scripts/logs/fruit.log 2>&1
 # # 宠汪汪邀请助力
 # 10 13-20/1 * * * node /scripts/jd_joy_run.js >> /scripts/logs/jd_joy_run.log 2>&1
 # 东东萌宠
@@ -84,8 +84,6 @@
 30 9,12,18 * * * node /scripts/jd_jxnc.js >> /scripts/logs/jd_jxnc.log 2>&1
 # 签到领现金
 10 */4 * * * node /scripts/jd_cash.js >> /scripts/logs/jd_cash.log 2>&1
-# 闪购盲盒
-47 8,22 * * * node /scripts/jd_sgmh.js >> /scripts/logs/jd_sgmh.log 2>&1
 # 京东秒秒币
 10 6,21 * * * node /scripts/jd_ms.js >> /scripts/logs/jd_ms.log 2>&1
 #美丽研究院
@@ -105,9 +103,9 @@
 #京东直播（又回来了）
 30-50/5 12,23 * * * node /scripts/jd_live.js >> /scripts/logs/jd_live.log 2>&1
 #京东健康社区
-35 0,6,18 * * * cd /scripts && ts-node /scripts/jd_health.ts >> /scripts/logs/jd_health.log 2>&1
+35 0,6,18 * * * cd /scripts && ts-node jd_health.ts >> /scripts/logs/jd_health.log 2>&1
 #京东健康社区收集健康能量
-5-45/20 * * * * node /scripts/jd_health_collect.js >> /scripts/logs/jd_health_collect.log 2>&1
+5-45/20 * * * * cd /scripts && ts-node jd_health_collect.ts >> /scripts/logs/jd_health_collect.log 2>&1
 # 幸运大转盘
 10 10,23 * * * node /scripts/jd_market_lottery.js >> /scripts/logs/jd_market_lottery.log 2>&1
 # 领金贴
@@ -179,7 +177,7 @@
 # 🐉依赖太旧，更新一下，过几天删
 0 0-23/4 * * * cd /scripts && ts-node jd_updatePackage.ts >> /scripts/logs/jd_updatePackage.log 2>&1
 # 赚京豆
-15 0,1,23 * * * cd /scripts && ts-node jd_zjd.ts >> /scripts/logs/jd_zjd.log 2>&1
+15 0,1 * * * cd /scripts && ts-node jd_zjd_v0.1.ts >> /scripts/logs/jd_zjd_v0.1.log 2>&1
 # 发财大赢家助力火爆
 # 0 * * * * node jd_facai.js >> /scripts/logs/jd_facai.log 2>&1
 # 京喜-88红包-宝箱
@@ -209,3 +207,5 @@
 # 0 0,9,16 * * * cd /scripts && ts-node jd_tiger.ts >> /scripts/logs/jd_tiger.log 2>&1
 # 京东汽车
 15 1 * * * cd /scripts && ts-node jd_car.ts >> /scripts/logs/jd_car.log 2>&1
+# 闪购盲盒
+20 8 * * * cd /scripts && ts-node jd_sgmh.ts >> /scripts/logs/jd_sgmh.log 2>&1
