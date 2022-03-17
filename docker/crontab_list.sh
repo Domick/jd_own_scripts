@@ -19,8 +19,8 @@
 0 0-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
 #明星小店(星店长，2021-06-10)
 # 0 1,21 * * * node /scripts/jd_star_shop.js >> /scripts/logs/jd_star_shop.log 2>&1
-#京喜领88元红包(6.31到期)
-# 30 1,6,12,21 * * * node /scripts/jd_jxlhb.js >> /scripts/logs/jd_jxlhb.log 2>&1
+#88红包
+5 0,6,16 * * * cd /scripts && ts-node jd_88hb.ts >> /scripts/logs/jd_88hb.log 2>&1
 #省钱大赢家之翻翻乐
 # 10,40 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
 ##############长期活动##############
@@ -32,6 +32,7 @@
 6 0,23 * * * node /scripts/jd_club_lottery.js >> /scripts/logs/jd_club_lottery.log 2>&1
 # 东东农场
 15 6-18/6 * * * cd /scripts && ts-node fruit.ts >> /scripts/logs/fruit.log 2>&1
+5 6-18/6 * * *  node /scripts/jd_fruit.js >> /scripts/logs/jd_fruit.log 2>&1
 # # 宠汪汪邀请助力
 # 10 13-20/1 * * * node /scripts/jd_joy_run.js >> /scripts/logs/jd_joy_run.log 2>&1
 # 东东萌宠
