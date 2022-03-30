@@ -1,24 +1,24 @@
 import axios from 'axios'
 import {readFileSync} from "fs";
+import {sendNotify} from './sendNotify';
 import USER_AGENT, {getShareCodePool, o2s, requireConfig, wait} from './TS_USER_AGENTS'
 
-let cookie: string = '', res: any = '', data: any, UserName: string, index: number
-let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: string[] = []
+let cookie: string = '', res: any = '', data: any, UserName: string
+let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: string[] = [], shareCodeFile: object = require('./jdFruitShareCodes')
+let message: string = ''
 
 !(async () => {
   let cookiesArr: string[] = await requireConfig()
-  try {
-    shareCodeSelf = JSON.parse(readFileSync('./utils/sharecodes.json').toString()).fruit
-    console.log(shareCodeSelf)
-  } catch (e) {
-    console.log('读取分享码失败')
-  }
-
-  for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i]
+  for (let [index, value] of cookiesArr.entries()) {
+    cookie = value
     UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
-    index = i + 1
-    console.log(`\n开始【京东账号${index}】${UserName}\n`)
+    console.log(`\n开始【京东账号${index + 1}】${UserName}\n`)
+    message += `【账号${index + 1}】  ${UserName}\n`
+
+    if (Object.keys(shareCodeFile)[index]) {
+      shareCodeSelf = shareCodeFile[Object.keys(shareCodeFile)[index]].split('@')
+    }
+    console.log(`第${index + 1}个账号获取的内部互助`, shareCodeSelf)
 
     // 初始化
     res = await api('initForFarm', {"version": 11, "channel": 3})
@@ -44,7 +44,7 @@ let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: strin
     await wait(1000)
     if (!res.newFriendMsg) {
       for (let fr of res.friends) {
-        res = await api('deleteFriendForFarm', {"shareCode": fr.shareCode, "version": 8, "channel": 1})
+        res = await api('deleteFriendForFarm', {"shareCode": fr.shareCode, "version": 14, "channel": 1, "babelChannel": "121"})
         await wait(1000)
         if (res.code === '0') {
           console.log(`删除好友${fr.nickName}成功`)
@@ -56,24 +56,24 @@ let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: strin
     }
 
     // 背包
-    process.env.jdFruitBeanCard = 'True'
-    if (process.env.jdFruitBeanCard.toLowerCase() === 'true') {
-      res = await api('myCardInfoForFarm', {"version": 14, "channel": 3, "babelChannel": "10"})
-      o2s(res, 'myCardInfoForFarm')
-      let beanCard: number = res.beanCard  // 换豆卡
-      console.log('换豆卡数量', beanCard)
-      for (let i = 0; i < 10; i++) {
-        if (totalEnergy >= 100 && beanCard) {
-          data = await api('userMyCardForFarm', {"cardType": "beanCard", "babelChannel": "10", "channel": 3, "version": 14})
-          console.log('使用水滴换豆卡，获得京豆', data.beanCount)
-          totalEnergy -= 100
-          beanCard--
-          await wait(1000)
-        }
-      }
-    } else {
-      console.log('未设置水滴换豆卡环境变量')
-    }
+    // process.env.jdFruitBeanCard = 'True'
+    // if (process.env.jdFruitBeanCard.toLowerCase() === 'true') {
+    //   res = await api('myCardInfoForFarm', {"version": 14, "channel": 3, "babelChannel": "10"})
+    //   o2s(res, 'myCardInfoForFarm')
+    //   let beanCard: number = res.beanCard  // 换豆卡
+    //   console.log('换豆卡数量', beanCard)
+    //   for (let i = 0; i < 10; i++) {
+    //     if (totalEnergy >= 100 && beanCard) {
+    //       data = await api('userMyCardForFarm', {"cardType": "beanCard", "babelChannel": "10", "channel": 3, "version": 14})
+    //       console.log('使用水滴换豆卡，获得京豆', data.beanCount)
+    //       totalEnergy -= 100
+    //       beanCard--
+    //       await wait(1000)
+    //     }
+    //   }
+    // } else {
+    //   console.log('未设置水滴换豆卡环境变量')
+    // }
 
 
     // 好友邀请奖励
@@ -136,19 +136,6 @@ let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: strin
       }
     }
 
-    // 助力奖励
-    res = await api('farmAssistInit', {"version": 14, "channel": 1, "babelChannel": "120"})
-    await wait(1000)
-    o2s(res, 'farmAssistInit')
-    for (let t of res.assistStageList) {
-      if (t.percentage === '100%' && t.stageStaus === 2) {
-        data = await api('receiveStageEnergy', {"version": 14, "channel": 1, "babelChannel": "120"})
-        await wait(1000)
-        console.log('被助力奖励', data.amount)
-      }
-    }
-
-
     // 任务
     res = await api('taskInitForFarm', {"version": 14, "channel": 1, "babelChannel": "120"})
     o2s(res)
@@ -203,10 +190,37 @@ let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: strin
     o2s(res, 'initForTurntableFarm')
     for (let t of res.turntableBrowserAds) {
       if (!t.status) {
-        console.log(t.main)
+        console.log("browserForTurntableFarm", t.main)
         data = await api('browserForTurntableFarm', {"type": 1, "adId": t.adId, "version": 4, "channel": 1})
         await wait(t.browserTimes * 1000 || 1000)
         data = await api('browserForTurntableFarm', {"type": 2, "adId": t.adId, "version": 4, "channel": 1})
+      }
+    }
+
+    if (!res.timingGotStatus && res.remainLotteryTimes) {
+      if (Date.now() > (res.timingLastSysTime + 60 * 60 * res.timingIntervalHours * 1000)) {
+        data = await api('timingAwardForTurntableFarm', {"version": 4, "channel": 1})
+        await wait(1000)
+        o2s(data, 'timingAwardForTurntableFarm')
+      } else {
+        console.log(`免费赠送的抽奖机会未到时间`)
+      }
+    }
+
+    // 天天红包助力
+    shareCodePool = await getShareCodePool('farm', 30)
+    shareCode = Array.from(new Set([...shareCodeSelf, ...shareCodePool]))
+    for (let code of shareCodeSelf) {
+      console.log('去红包助力', code)
+      data = await api('initForFarm', {"shareCode": `${code}-3`, "lng": "0.000000", "lat": "0.000000", "sid": "2871ac0252645ef0e2731aa7d03c1d3w", "un_area": "16_1341_1347_44750", "version": 14, "channel": 1, "babelChannel": 0})
+      await wait(3000)
+      if (data.code === '0') {
+        console.log('红包助力成功')
+      } else if (data.code === '11') {
+        console.log('红包已助力过')
+      } else if (data.code === '13') {
+        console.log('上限')
+        break
       }
     }
 
@@ -221,17 +235,6 @@ let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: strin
       await wait(2000)
     }
 
-    if (!res.timingGotStatus && res.remainLotteryTimes) {
-      if (Date.now() > (res.timingLastSysTime + 60 * 60 * res.timingIntervalHours * 1000)) {
-        data = await api('timingAwardForTurntableFarm', {"version": 4, "channel": 1})
-        await wait(1000)
-        o2s(data, 'timingAwardForTurntableFarm')
-      } else {
-        console.log(`免费赠送的抽奖机会未到时间`)
-      }
-    }
-
-    /*
     // 助力
     shareCodePool = await getShareCodePool('farm', 30)
     shareCode = Array.from(new Set([...shareCodeSelf, ...shareCodePool]))
@@ -256,13 +259,32 @@ let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: strin
         break
       }
     }
+    // 助力奖励
+    res = await api('farmAssistInit', {"version": 14, "channel": 1, "babelChannel": "120"})
+    await wait(1000)
+    o2s(res, 'farmAssistInit')
+    let farmAssistInit_waterEnergy: number = 0
+    for (let t of res.assistStageList) {
+      if (t.percentage === '100%' && t.stageStaus === 2) {
+        data = await api('receiveStageEnergy', {"version": 14, "channel": 1, "babelChannel": "120"})
+        await wait(1000)
+        farmAssistInit_waterEnergy += t.waterEnergy
+      } else if (t.stageStaus === 3) {
+        farmAssistInit_waterEnergy += t.waterEnergy
+      }
+    }
+    console.log('收到助力', res.assistFriendList.length)
+    console.log('助力已领取', farmAssistInit_waterEnergy)
+    message += `【助力已领取】  ${farmAssistInit_waterEnergy}\n`
 
-     */
+    message += '\n\n'
   }
+  if (message)
+    await sendNotify('东东农场', message)
 })()
 
 async function api(fn: string, body: object) {
-  let {data} = await axios.get(`https://api.m.jd.com/client.action?functionId=${fn}&body=${JSON.stringify(body)}&&appid=wh5&client=apple&clientVersion=10.2.4`, {
+  let {data} = await axios.get(`https://api.m.jd.com/client.action?functionId=${fn}&body=${JSON.stringify(body)}&appid=wh5&client=apple&clientVersion=10.2.4`, {
     headers: {
       "Host": "api.m.jd.com",
       "Origin": "https://carry.m.jd.com",

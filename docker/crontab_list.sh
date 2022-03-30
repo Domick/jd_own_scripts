@@ -178,7 +178,7 @@
 # 🐉依赖太旧，更新一下，过几天删
 0 0-23/4 * * * cd /scripts && ts-node jd_updatePackage.ts >> /scripts/logs/jd_updatePackage.log 2>&1
 # 赚京豆
-15 0,1 * * * cd /scripts && ts-node jd_zjd_v0.1.ts >> /scripts/logs/jd_zjd_v0.1.log 2>&1
+15,30,45 0 * * * cd /scripts && ts-node jd_zjd_v0.2.ts >> /scripts/logs/jd_zjd_v0.2.log 2>&1
 # 发财大赢家助力火爆
 # 0 * * * * node jd_facai.js >> /scripts/logs/jd_facai.log 2>&1
 # 京喜-88红包-宝箱
