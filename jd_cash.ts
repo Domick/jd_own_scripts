@@ -1,7 +1,8 @@
-import USER_AGENT, {o2s, post, requireConfig, wait} from './TS_USER_AGENTS'
+import USER_AGENT, {getRandomNumberByRange, o2s, post, requireConfig, wait} from './TS_USER_AGENTS'
+import 'dotenv/config'
 
 let cookie: string = '', res: any = '', data: any, UserName: string
-let message: string = ''
+let message: string = '', pandaToken: string[] = process.env.PANDA_TOKEN ? process.env.PANDA_TOKEN.split('&') : []
 
 !(async () => {
   let cookiesArr: string[] = await requireConfig()
@@ -54,7 +55,7 @@ let message: string = ''
 })()
 
 async function api(fn: string, body: object) {
-  let sign = await post('https://api.jds.codes/jd/sign', {fn, body})
+  let sign = await post('https://api.jds.codes/jd/sign', {fn, body}, {'Authorization': `Bearer ${pandaToken[getRandomNumberByRange(0, pandaToken.length - 1)]}`})
   if (!sign?.data?.sign) {
     o2s(sign, 'getSign Error')
     return {}

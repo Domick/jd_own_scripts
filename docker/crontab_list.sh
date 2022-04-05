@@ -156,7 +156,7 @@
 # 财富岛热气球挂后台
 10 0 * * * cd /scripts && ts-node jd_cfd_balloon.ts >> /scripts/logs/jd_cfd_balloon.log 2>&1
 # 财富岛捡贝壳挂后台
-10 0 * * * cd /scripts && ts-node jd_cfd_shell.ts >> /scripts/logs/jd_cfd_shell.log 2>&1
+# 10 0 * * * cd /scripts && ts-node jd_cfd_shell.ts >> /scripts/logs/jd_cfd_shell.log 2>&1
 # 城城领现金
 # 0 0-23/1 * * * cd /scripts && ts-node jd_city.ts >> /scripts/logs/jd_city.log 2>&1
 # xtg
@@ -166,7 +166,7 @@
 # 领京豆-任务
 1 0,9,12,18 * * * cd /scripts && ts-node jd_bean_box.ts >> /scripts/logs/jd_bean_box.log 2>&1
 # 京喜-首页-牛牛福利
-1 0,9,19,23 * * * cd /scripts && ts-node jx_nnfls.ts >> /scripts/logs/jx_nnfls.log 2>&1
+# 1 0,9,19,23 * * * cd /scripts && ts-node jx_nnfls.ts >> /scripts/logs/jx_nnfls.log 2>&1
 # 领京豆额外奖励
 10 0,12,22 * * * node jd_bean_home.js >> /scripts/logs/jd_bean_home.log 2>&1
 # 京东-下拉
@@ -190,7 +190,7 @@
 # 宠汪汪三代目
 # 0 0-23/3 * * * cd /scripts && ts-node jd_joy_new.ts >> /scripts/logs/jd_joy_new.log 2>&1
 # 京喜财富岛-合成游戏
-30 * * * * cd /scripts && ts-node jd_cfd_game.ts >> /scripts/logs/jd_cfd_game.log 2>&1
+# 30 * * * * cd /scripts && ts-node jd_cfd_game.ts >> /scripts/logs/jd_cfd_game.log 2>&1
 # 京东-锦鲤红包
 # 做任务、助力、开红包
 5 0,6,18 * * * cd /scripts && ts-node jd_jinli_redpacket.ts >> /scripts/logs/jd_jinli_redpacket.log 2>&1
