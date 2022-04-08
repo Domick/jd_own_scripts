@@ -51,6 +51,8 @@ let message: string = '', pandaToken: string[] = process.env.PANDA_TOKEN ? proce
       }
       await wait(2000)
     }
+    const fs = require('fs')
+    fs.writeFileSync('.env', 'PANDA_TOKEN=""\n')
   }
 })()
 

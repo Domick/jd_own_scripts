@@ -92,7 +92,8 @@
 #京东保价
 #41 0,23 * * * node /scripts/jd_price.js >> /scripts/logs/jd_price.log 2>&1
 #京东极速版签到+赚现金任务
-21 1,6 * * * node /scripts/jd_speed_sign.js >> /scripts/logs/jd_speed_sign.log 2>&1
+21 1,6 * * * cd /scripts && ts-node jd_speed_sign.ts >> /scripts/logs/jd_speed_sign.log 2>&1
+0 7,19 * * * node /scripts/jd_speed_coin.js >> /scripts/logs/jd_speed_coin.log 2>&1
 #监控crazyJoy分红
 10 12 * * * node /scripts/jd_crazy_joy_bonus.js >> /scripts/logs/jd_crazy_joy_bonus.log 2>&1
 #京喜财富岛
@@ -141,6 +142,8 @@
 55 4,8,14 * * * node /scripts/jd_dreamFactory_help.js >> /scripts/logs/jd_dreamFactory_help.log 2>&1
 # 手机狂欢城
 5 0-18/6 * * * node /scripts/jd_carnivalcity.js >> /scripts/logs/jd_carnivalcity.log 2>&1
+# 手机狂欢城
+15 0,6 * * * cd /scripts && ts-node jd_carnivalcity_card.ts >> /scripts/logs/jd_carnivalcity_card.log 2>&1
 # ddWorld
 30 */2 * * * cd /scripts && ts-node jd_ddWorld.ts >> /scripts/logs/jd_ddWorld.log 2>&1
 # 京东魔方
@@ -191,9 +194,6 @@
 # 0 0-23/3 * * * cd /scripts && ts-node jd_joy_new.ts >> /scripts/logs/jd_joy_new.log 2>&1
 # 京喜财富岛-合成游戏
 # 30 * * * * cd /scripts && ts-node jd_cfd_game.ts >> /scripts/logs/jd_cfd_game.log 2>&1
-# 京东-锦鲤红包
-# 做任务、助力、开红包
-5 0,6,18 * * * cd /scripts && ts-node jd_jinli_redpacket.ts >> /scripts/logs/jd_jinli_redpacket.log 2>&1
 # 金榜任务
 30 22,18 * * * cd /scripts && ts-node jd_jinbang1.ts >> /scripts/logs/jd_jinbang1.log 2>&1
 # 京东-锦鲤红包
