@@ -1,16 +1,104 @@
-const $ = new Env('cookie');
+const $ = new Env("jd_queryBean")
+const {getDate} = require('date-fns')
+const axios = require("axios")
 
-if ($request.url.includes('https://api.m.jd.com/client.action')) {
-  console.log('========================')
-  let cookie = $request.headers['cookie'] || $request.headers['Cookie']
-  let s = ''
-  cookie.match(/(pt_key|pt_pin)[^;]*/g).map(item => {
-    s += item + ';'
+let UserName, cookie, cookiesArr = []
+
+!(async () => {
+  let s = await queryBean()
+  s.forEach((value, index, array) => {
+    array[index].name = `CK ${index + 1}`
   })
-  console.log(s)
-  console.log('========================')
-  $.msg('获取成功', 'success', '在日志中查看');
-  $.done()
+  table(s)
+})()
+
+function table(rows) {
+  const ConsoleGrid = require("console-grid");
+  const consoleGrid = new ConsoleGrid();
+
+  const data = {
+    columns: [{
+      id: "name",
+      name: `Name`,
+      type: "string",
+      minWidth: 10,
+      maxWidth: 50
+    }, {
+      id: "In",
+      type: "number",
+      name: "In",
+      minWidth: 10,
+      align: "right"
+    }, {
+      id: "Out",
+      type: "number",
+      name: "Out",
+      minWidth: 10,
+      align: "right"
+    }],
+    rows: rows
+  };
+  consoleGrid.render(data);
+}
+
+async function queryBean() {
+  requireConfig()
+  let arr = []
+  for (let [index, value] of cookiesArr.entries()) {
+    cookie = value
+    UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)[1])
+    console.log(index + 1, UserName)
+
+    let p = 1, beanIn = 0, beanOut = 0, flag = true
+    while (p && flag) {
+      try {
+        let {data: res} = await axios.post('https://api.m.jd.com/client.action?functionId=getJingBeanBalanceDetail',
+          `body=${encodeURIComponent(JSON.stringify({"pageSize": "20", "page": p.toString()}))}&appid=ld`, {
+            headers: {
+              'Host': 'api.m.jd.com',
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'User-Agent': "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
+              'Cookie': cookie,
+            }
+          })
+        let today = getDate(new Date())
+        console.log(p, res.detailList.length)
+        for (let t of res.detailList) {
+          let amount = parseInt(t.amount), date = getDate(new Date(t.date))
+          if (date !== today) {
+            // console.log('pass', t.eventMassage, amount, t.date)
+            flag = false
+            break
+          }
+          // console.log(t.eventMassage, amount)
+          amount < 0 ? beanOut += amount : beanIn += amount
+        }
+        await $.wait(2000)
+        if (p < 50) {
+          p++
+        } else {
+          break
+        }
+      } catch (e) {
+        console.log('error', e)
+        await $.wait(2000)
+        break
+      }
+    }
+    arr.push({name: UserName, In: beanIn, Out: Math.abs(beanOut)})
+    await $.wait(2000)
+  }
+  return arr
+}
+
+function requireConfig() {
+  const jdCookieNode = require('./jdCookie.js')
+  Object.keys(jdCookieNode).forEach((item) => {
+    if (jdCookieNode[item]) {
+      cookiesArr.push(jdCookieNode[item])
+    }
+  })
+  console.log(`共${cookiesArr.length}个京东账号\n`)
 }
 
 function Env(t, e) {
@@ -107,7 +195,11 @@ function Env(t, e) {
         i = i ? i.replace(/\n/g, "").trim() : i;
         let r = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
         r = r ? 1 * r : 20, r = e && e.timeout ? e.timeout : r;
-        const [o, h] = i.split("@"), n = {url: `http://${h}/v1/scripting/evaluate`, body: {script_text: t, mock_type: "cron", timeout: r}, headers: {"X-Key": o, Accept: "*/*"}};
+        const [o, h] = i.split("@"), n = {
+          url: `http://${h}/v1/scripting/evaluate`,
+          body: {script_text: t, mock_type: "cron", timeout: r},
+          headers: {"X-Key": o, Accept: "*/*"}
+        };
         this.post(n, (t, e, i) => s(i))
       }).catch(t => this.logErr(t))
     }
@@ -116,7 +208,8 @@ function Env(t, e) {
       if (!this.isNode()) return {};
       {
         this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path");
-        const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile), s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e);
+        const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile),
+          s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e);
         if (!s && !i) return {};
         {
           const i = s ? t : e;
@@ -132,7 +225,8 @@ function Env(t, e) {
     writedata() {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path");
-        const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile), s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e), r = JSON.stringify(this.data);
+        const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile),
+          s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e), r = JSON.stringify(this.data);
         s ? this.fs.writeFileSync(t, r) : i ? this.fs.writeFileSync(e, r) : this.fs.writeFileSync(t, r)
       }
     }
@@ -235,8 +329,16 @@ function Env(t, e) {
     }
 
     time(t, e = null) {
-      const s = e ? new Date(e) : new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000);
-      let i = {"M+": s.getMonth() + 1, "d+": s.getDate(), "H+": s.getHours(), "m+": s.getMinutes(), "s+": s.getSeconds(), "q+": Math.floor((s.getMonth() + 3) / 3), S: s.getMilliseconds()};
+      const s = e ? new Date(e) : new Date;
+      let i = {
+        "M+": s.getMonth() + 1,
+        "d+": s.getDate(),
+        "H+": s.getHours(),
+        "m+": s.getMinutes(),
+        "s+": s.getSeconds(),
+        "q+": Math.floor((s.getMonth() + 3) / 3),
+        S: s.getMilliseconds()
+      };
       /(y+)/.test(t) && (t = t.replace(RegExp.$1, (s.getFullYear() + "").substr(4 - RegExp.$1.length)));
       for (let e in i) new RegExp("(" + e + ")").test(t) && (t = t.replace(RegExp.$1, 1 == RegExp.$1.length ? i[e] : ("00" + i[e]).substr(("" + i[e]).length)));
       return t

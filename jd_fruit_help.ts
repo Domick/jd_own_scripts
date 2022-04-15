@@ -9,6 +9,7 @@
 
 import axios from 'axios'
 import USER_AGENT, {get, getRandomNumberByRange, getShareCodePool, o2s, requireConfig, wait} from './TS_USER_AGENTS'
+import {getDate} from "date-fns";
 
 let cookie: string = '', res: any = '', data: any, UserName: string
 let shareCodeSelf: string[] = [], shareCodePool: string[] = [], shareCode: string[] = [], shareCodeFile: object = require('./jdFruitShareCodes')
@@ -32,11 +33,17 @@ let message: string = '', log: { help: string, runTimes: string } = {help: '', r
     await wait(15000)
 
     res = await api('initForFarm', {"version": 11, "channel": 3})
+    if (res.code === '6') {
+      console.log('黑号')
+      await wait(5000)
+      continue
+    }
     try {
       console.log('助力码', res.farmUserPro.shareCode)
       for (let i = 0; i < 5; i++) {
         try {
-          res = await get(`https://api.jdsharecode.xyz/api/runTimes0407?activityId=farm&sharecode=${res.farmUserPro.shareCode}`)
+          let today: number = getDate(new Date())
+          res = await get(`https://api.jdsharecode.xyz/api/runTimes0407?activityId=farm&sharecode=${res.farmUserPro.shareCode}&today=${today}`)
           console.log(res)
           log.runTimes += `第${i + 1}次${res}\n`
           break
@@ -46,7 +53,6 @@ let message: string = '', log: { help: string, runTimes: string } = {help: '', r
           await wait(getRandomNumberByRange(10000, 30000))
         }
       }
-
     } catch (e) {
       console.log('获取助力码失败，黑号？')
       continue

@@ -210,3 +210,5 @@
 15 1 * * * cd /scripts && ts-node jd_car.ts >> /scripts/logs/jd_car.log 2>&1
 # 闪购盲盒
 20 8 * * * cd /scripts && ts-node jd_sgmh.ts >> /scripts/logs/jd_sgmh.log 2>&1
+# 极速版-happyDig
+15 0,1,6,18 * * * cd /scripts && ts-node jd_speed_happyDig.ts >> /scripts/logs/jd_speed_happyDig.log 2>&1
