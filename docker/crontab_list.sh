@@ -177,7 +177,7 @@
 # cfd 100
 0 0 * * * node jd_cfd_hb.js >> /scripts/logs/jd_cfd_hb.log 2>&1
 # 京东-下拉
-0 * * * *  cd /scripts && ts-node jd_tewu.ts >> /scripts/logs/jd_tewu.log 2>&1
+15 8,20 * * *  cd /scripts && ts-node jd_tewu.ts >> /scripts/logs/jd_tewu.log 2>&1
 # 🐉依赖太旧，更新一下，过几天删
 0 0-23/4 * * * cd /scripts && ts-node jd_updatePackage.ts >> /scripts/logs/jd_updatePackage.log 2>&1
 # 赚京豆
@@ -211,4 +211,4 @@
 # 闪购盲盒
 20 8 * * * cd /scripts && ts-node jd_sgmh.ts >> /scripts/logs/jd_sgmh.log 2>&1
 # 极速版-happyDig
-15 0,1,6,18 * * * cd /scripts && ts-node jd_speed_happyDig.ts >> /scripts/logs/jd_speed_happyDig.log 2>&1
+15 0,1,6,18 * * * cd /scripts && ts-node jd_speed_happy_dig.ts >> /scripts/logs/jd_speed_happy_dig.log 2>&1
