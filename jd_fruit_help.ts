@@ -7,7 +7,6 @@
  * cron: 35 0,3,5 * * *
  */
 
-import axios from 'axios'
 import {getDate} from "date-fns"
 import {H5ST} from "./utils/h5st"
 import USER_AGENT, {get, getRandomNumberByRange, getShareCodePool, o2s, requireConfig, wait} from './TS_USER_AGENTS'
@@ -33,9 +32,9 @@ let message: string = '', log: { help: string, runTimes: string } = {help: '', r
     o2s(shareCodeSelf, `第${index + 1}个账号获取的内部互助`)
 
     res = await api('initForFarm', {"version": 11, "channel": 3})
-    if (res.code === '6') {
-      console.log('黑号')
-      await wait(5000)
+    if (res.code !== '0') {
+      console.log('初始化失败')
+      await wait(2000)
       continue
     }
     try {
@@ -63,39 +62,44 @@ let message: string = '', log: { help: string, runTimes: string } = {help: '', r
     shareCodePool = await getShareCodePool('farm', 50)
     shareCode = Array.from(new Set([...shareCodeSelf, ...shareCodePool]))
 
-    for (let code of shareCodeSelf) {
-      console.log(`账号 ${UserName} 去助力 ${code} ${shareCodeSelf.includes(code) ? '*内部*' : ''}`)
-      res = await api('initForFarm', {"mpin": "", "utm_campaign": "t_335139774", "utm_medium": "appshare", "shareCode": code, "utm_term": "Wxfriends", "utm_source": "iosapp", "imageUrl": "", "nickName": "", "version": 14, "channel": 2, "babelChannel": 0})
-      await wait(3000)
-      if (res.helpResult.code === '7') {
-        console.log('不给自己助力')
-      } else if (res.helpResult.code === '0') {
-        console.log('助力成功,获得', res.helpResult.salveHelpAddWater)
-        log.help += `助力成功 ${code} ${shareCodeSelf.includes(code) ? '*内部*' : ''}\n`
-      } else if (res.helpResult.code === '8') {
-        console.log('上限')
-        break
-      } else if (res.helpResult.code === '9') {
-        console.log('已助力')
-        log.help += `已助力 ${code} ${shareCodeSelf.includes(code) ? '*内部*' : ''}\n`
-      } else if (res.helpResult.code === '10') {
-        console.log('已满')
-      } else if (res.helpResult.remainTimes === 0) {
-        console.log('次数用完')
-        break
-      }
-    }
-    await wait(1000)
+    // for (let code of shareCodeSelf) {
+    //   console.log(`账号 ${UserName} 去助力 ${code} ${shareCodeSelf.includes(code) ? '*内部*' : ''}`)
+    //   res = await api('initForFarm', {"mpin": "", "utm_campaign": "t_335139774", "utm_medium": "appshare", "shareCode": code, "utm_term": "Wxfriends", "utm_source": "iosapp", "imageUrl": "", "nickName": "", "version": 14, "channel": 2, "babelChannel": 0})
+    //   await wait(5000)
+    //   if (res.helpResult.code === '7') {
+    //     console.log('不给自己助力')
+    //   } else if (res.helpResult.code === '0') {
+    //     console.log('助力成功,获得', res.helpResult.salveHelpAddWater)
+    //     log.help += `助力成功 ${code} ${shareCodeSelf.includes(code) ? '*内部*' : ''}\n`
+    //   } else if (res.helpResult.code === '8') {
+    //     console.log('上限')
+    //     break
+    //   } else if (res.helpResult.code === '9') {
+    //     console.log('已助力')
+    //     log.help += `已助力 ${code} ${shareCodeSelf.includes(code) ? '*内部*' : ''}\n`
+    //   } else if (res.helpResult.code === '10') {
+    //     console.log('已满')
+    //   } else if (res.helpResult.remainTimes === 0) {
+    //     console.log('上限')
+    //     break
+    //   }
+    // }
+    // await wait(10000)
 
     // 助力奖励
     res = await api('farmAssistInit', {"version": 14, "channel": 1, "babelChannel": "120"})
-    await wait(1000)
+    if (res.code !== '0') {
+      console.log('farmAssistInit Error')
+      await wait(2000)
+      continue
+    }
+    await wait(3000)
     o2s(res, 'farmAssistInit')
     let farmAssistInit_waterEnergy: number = 0
     for (let t of res.assistStageList) {
       if (t.percentage === '100%' && t.stageStaus === 2) {
         data = await api('receiveStageEnergy', {"version": 14, "channel": 1, "babelChannel": "120"})
-        await wait(1000)
+        await wait(3000)
         farmAssistInit_waterEnergy += t.waterEnergy
       } else if (t.stageStaus === 3) {
         farmAssistInit_waterEnergy += t.waterEnergy
@@ -106,7 +110,7 @@ let message: string = '', log: { help: string, runTimes: string } = {help: '', r
     message += `【助力已领取】  ${farmAssistInit_waterEnergy}\n`
 
     message += '\n\n'
-    await wait(5000)
+    await wait(60000)
   }
   if (message) {
     console.log('===================')
@@ -125,15 +129,12 @@ async function api(fn: string, body: object) {
     'clientVersion': '10.2.4',
     'functionId': fn,
   })
-  let {data} = await axios.get(`https://api.m.jd.com/client.action?functionId=${fn}&body=${JSON.stringify(body)}&appid=wh5&client=apple&clientVersion=10.2.4&h5st=${h5st}`, {
-    headers: {
-      "Host": "api.m.jd.com",
-      "Origin": "https://carry.m.jd.com",
-      "User-Agent": USER_AGENT,
-      "Accept-Language": "zh-CN,zh-Hans;q=0.9",
-      "Referer": "https://carry.m.jd.com/",
-      "Cookie": cookie
-    }
+  return await get(`https://api.m.jd.com/client.action?functionId=${fn}&body=${JSON.stringify(body)}&appid=wh5&client=apple&clientVersion=10.2.4&h5st=${h5st}`, {
+    "Host": "api.m.jd.com",
+    "Origin": "https://carry.m.jd.com",
+    "User-Agent": USER_AGENT,
+    "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+    "Referer": "https://carry.m.jd.com/",
+    "Cookie": cookie
   })
-  return data
 }

@@ -18,7 +18,7 @@ let cookie: string = '', UserName: string, allMessage: string = '', res: any = '
   try {
     pushplusArr = JSON.parse(readFileSync('./utils/account.json').toString())
   } catch (e) {
-    console.log('utils/pushplus.json load failed')
+    console.log('utils/account.json load failed')
   }
   for (let user of pushplusArr) {
     if (user.pushplus)
