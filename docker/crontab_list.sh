@@ -215,4 +215,4 @@
 # 极速版-挖宝
 2 0,1,6 * * *  cd /scripts && ts-node jd_speed_wabao.ts >> /scripts/logs/jd_speed_wabao.log 2>&1
 # 618
-15 0-23/2 * * *  cd /scripts && ts-node jd_618_v01.ts >> /scripts/logs/jd_618_v01.log 2>&1
+15 0-23/2 * * *  cd /scripts && ts-node jd_618_v02.ts >> /scripts/logs/jd_618_v02.log 2>&1
