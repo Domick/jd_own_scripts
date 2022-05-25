@@ -215,6 +215,10 @@
 # 极速版-挖宝
 2 0,1,6 * * *  cd /scripts && ts-node jd_speed_wabao.ts >> /scripts/logs/jd_speed_wabao.log 2>&1
 # 618
-15 0-23/2 * * *  cd /scripts && ts-node jd_618_v03.ts >> /scripts/logs/jd_618_v03.log 2>&1
+10 8,15,20 * * *  cd /scripts && ts-node jd_618_1.ts >> /scripts/logs/jd_618_1.log 2>&1
+# 618-收金币
+15 0-23/2 * * *  cd /scripts && ts-node jd_618_coin.ts >> /scripts/logs/jd_618_coin.log 2>&1
 # 618-红包
-0 8 * * *  cd /scripts && ts-node jd_618_hongbao.ts >> /scripts/logs/jd_618_hongbao.log 2>&1
+10 20,21,22 * * *  cd /scripts && ts-node jd_618_hongbao_1.ts >> /scripts/logs/jd_618_hongbao_1.log 2>&1
+# 运行即领取膨胀红包
+5 21 * * *  cd /scripts && ts-node jd_618_hongbao_award.ts >> /scripts/logs/jd_618_hongbao_award.log 2>&1
