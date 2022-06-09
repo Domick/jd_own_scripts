@@ -17,10 +17,13 @@ class Jd_618 extends JDHelloWorld {
   user: User
   logTool: Log_618 = new Log_618()
   shareCodeSelf: string[] = []
-
+  
   constructor() {
     super();
     console.log('version: 1300')
+  }
+  getCookie(): Promise<void> {
+      
   }
 
   async init() {
