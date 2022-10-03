@@ -26,7 +26,7 @@ class Health extends JDHelloWorld {
 
   async runTimes(code: string) {
     try {
-      let data = await this.get(`https://api.jdsharecode.xyz/api/runTimes0509?activityId=health&sharecode=${code}`)
+      let data = await this.get(`https://sharecodepool.cnmb.win/api/runTimes0917?activityId=health&sharecode=${code}`)
       console.log(data)
     } catch (e) {
       await this.wait(5000)
@@ -118,12 +118,13 @@ class Health extends JDHelloWorld {
         try {
           if (res.data.bizMsg === '助力失败丨啊哦您今日的爱心值已爆棚，明天继续吧') {
             break
-          } else if (res.data.bizMsg === '助力失败丨助力已满员！谢谢你哦~')
+          } else if (res.data.bizMsg === '助力失败丨助力已满员！谢谢你哦~') {
             full.push(code)
-          else
+          } else {
             console.log(res.data.bizMsg)
+          }
         } catch (e) {
-          break
+          this.o2s(res, 'jdhealth_collectScore catch')
         } finally {
           await this.wait(3000)
         }

@@ -1,11 +1,11 @@
 /**
- * 汪汪乐园-跑步+组队
+ * 汪汪乐园-跑步+组队+浏览
  * cron: 20 * * * *
  * export FP_448DE=""
  * export FP_B6AC3=""
  */
 
-import {H5ST} from "./utils/h5st"
+import {H5ST} from "./utils/h5st_pro"
 import {getDate} from "date-fns";
 import {JDHelloWorld, User} from "./TS_JDHelloWorld";
 
@@ -20,7 +20,7 @@ class Joy_Park_Run extends JDHelloWorld {
   }
 
   async init() {
-    await this.run(new Joy_Park_Run())
+    await this.run(this)
   }
 
   // 秒转分:秒
@@ -30,36 +30,19 @@ class Joy_Park_Run extends JDHelloWorld {
     return `${minutes}分${second}秒`
   }
 
-  // 小数加法
-  add(num1: number, num2: number) {
-    let r1: number, r2: number
-    try {
-      r1 = num1.toString().split('.')[1].length
-    } catch (e) {
-      r1 = 0
-    }
-    try {
-      r2 = num2.toString().split('.')[1].length
-    } catch (e) {
-      r2 = 0
-    }
-    let m: number = Math.pow(10, Math.max(r1, r2))
-    return (num1 * m + num2 * m) / m
-  }
-
   async team(fn: string, body: object) {
     let timestamp: number = Date.now(), h5st: string
-    h5st = this.teamTool.__genH5st({
+    h5st = await this.teamTool.__genH5st({
       appid: "activities_platform",
       body: JSON.stringify(body),
       client: "ios",
-      clientVersion: "3.1.0",
+      clientVersion: "3.9.2",
       functionId: fn,
       t: timestamp.toString()
     })
-    return await this.get(`https://api.m.jd.com/?functionId=${fn}&body=${encodeURIComponent(JSON.stringify(body))}&t=${timestamp}&appid=activities_platform&client=ios&clientVersion=3.1.0&cthr=1&h5st=${h5st}`, {
+    return await this.get(`https://api.m.jd.com/?functionId=${fn}&body=${encodeURIComponent(JSON.stringify(body))}&t=${timestamp}&appid=activities_platform&client=ios&clientVersion=3.9.2&cthr=1&h5st=${h5st}`, {
       'Host': 'api.m.jd.com',
-      'User-Agent': 'jdltapp;',
+      'User-Agent': this.user.UserAgent,
       'Origin': 'https://h5platform.jd.com',
       'X-Requested-With': 'com.jd.jdlite',
       'Referer': 'https://h5platform.jd.com/',
@@ -70,16 +53,16 @@ class Joy_Park_Run extends JDHelloWorld {
   async api(fn: string, body: object) {
     let timestamp: number = Date.now(), h5st: string = ''
     if (fn === 'runningOpenBox') {
-      h5st = this.apiTool.__genH5st({
+      h5st = await this.apiTool.__genH5st({
         appid: "activities_platform",
         body: JSON.stringify(body),
         client: "ios",
-        clientVersion: "3.1.0",
+        clientVersion: "3.9.2",
         functionId: fn,
         t: timestamp.toString()
       })
     }
-    let params: string = `functionId=${fn}&body=${JSON.stringify(body)}&t=${timestamp}&appid=activities_platform&client=ios&clientVersion=3.1.0&cthr=1`
+    let params: string = `functionId=${fn}&body=${JSON.stringify(body)}&t=${timestamp}&appid=activities_platform&client=ios&clientVersion=3.9.2&cthr=1`
     h5st && (params += `&h5st=${h5st}`)
     return await this.post('https://api.m.jd.com/', params, {
       'authority': 'api.m.jd.com',
@@ -87,15 +70,15 @@ class Joy_Park_Run extends JDHelloWorld {
       'cookie': this.user.cookie,
       'origin': 'https://h5platform.jd.com',
       'referer': 'https://h5platform.jd.com/',
-      'user-agent': 'jdltapp;iPhone;3.1.0;'
+      'User-Agent': this.user.UserAgent,
     })
   }
 
   async runningPageHome() {
-    return this.get(`https://api.m.jd.com/?functionId=runningPageHome&body=%7B%22linkId%22:%22L-sOanK_5RJCz7I314FpnQ%22,%22isFromJoyPark%22:true,%22joyLinkId%22:%22LsQNxL7iWDlXUs6cFl-AAg%22%7D&t=${Date.now()}&appid=activities_platform&client=ios&clientVersion=3.1.0`, {
+    return this.get(`https://api.m.jd.com/?functionId=runningPageHome&body=%7B%22linkId%22:%22L-sOanK_5RJCz7I314FpnQ%22,%22isFromJoyPark%22:true,%22joyLinkId%22:%22LsQNxL7iWDlXUs6cFl-AAg%22%7D&t=${Date.now()}&appid=activities_platform&client=ios&clientVersion=3.9.2`, {
       'Host': 'api.m.jd.com',
       'Origin': 'https://h5platform.jd.com',
-      'User-Agent': 'jdltapp;',
+      'User-Agent': this.user.UserAgent,
       'Referer': 'https://h5platform.jd.com/',
       'Cookie': this.user.cookie
     })
@@ -107,7 +90,10 @@ class Joy_Park_Run extends JDHelloWorld {
       for (let i = 0; i < 5; i++) {
         res = await this.api('runningOpenBox', {"linkId": "L-sOanK_5RJCz7I314FpnQ"})
         if (parseFloat(res.data.assets) >= assets) {
-          let assets: number = parseFloat(res.data.assets)
+          assets = parseFloat(res.data.assets)
+          res = await this.api('runningFail', {"linkId": "L-sOanK_5RJCz7I314FpnQ"})
+          this.o2s(res, 'runningFail')
+
           res = await this.api('runningPreserveAssets', {"linkId": "L-sOanK_5RJCz7I314FpnQ"})
           console.log('领取成功', assets)
           break
@@ -130,12 +116,53 @@ class Joy_Park_Run extends JDHelloWorld {
 
   async main(user: User) {
     this.user = user
+    this.user.UserAgent = `jdltapp;iPhone;3.9.2;Mozilla/5.0 (iPhone; CPU iPhone OS ${this.getIosVer()} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1;`
     let assets: number = parseFloat(process.env.JD_JOY_PARK_RUN_ASSETS || '0.08')
     let rewardAmount: number = 0
     try {
-      this.teamTool = new H5ST('448de', 'jdltapp;', process.env.FP_448DE || '')
+      this.teamTool = new H5ST('448de', this.user.UserAgent, process.env.FP_448DE || "", 'https://h5platform.jd.com/swm-stable/people-run/index?activityId=L-sOanK_5RJCz7I314FpnQ', 'https://h5platform.jd.com')
       await this.teamTool.__genAlgo()
-      let res: any = await this.team('runningMyPrize', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "pageSize": 20, "time": null, "ids": null})
+      let res: any, apTaskList: any
+
+      apTaskList = await this.api('apTaskList', {"linkId": "LsQNxL7iWDlXUs6cFl-AAg"})
+      for (let t of apTaskList.data) {
+        if (t.taskType === 'BROWSE_CHANNEL' && !t.taskFinished) {
+          console.log(t.taskTitle)
+          res = await this.api('apDoTask', {"taskType": t.taskType, "taskId": t.id, "itemId": encodeURIComponent(t.taskSourceUrl), "linkId": "LsQNxL7iWDlXUs6cFl-AAg"})
+          res.success ? console.log('任务完成') : this.o2s(res, '任务失败')
+          await this.wait(1000)
+          res = await this.api('apTaskDrawAward', {"taskType": t.taskType, "taskId": t.id, "linkId": "LsQNxL7iWDlXUs6cFl-AAg"})
+          res.success ? console.log('领奖成功', res.data[0].awardGivenNumber) : this.o2s(res, '领奖失败')
+        }
+      }
+
+      apTaskList = await this.api('apTaskList', {"linkId": "L-sOanK_5RJCz7I314FpnQ"})
+      for (let t of apTaskList.data) {
+        if (t.taskShowTitle === '逛会场得生命值' && !t.taskFinished) {
+          let apTaskDetail: any = await this.api('apTaskDetail', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "taskType": "BROWSE_CHANNEL", "taskId": t.id, "channel": 4})
+          await this.wait(1000)
+          let taskItemList = apTaskDetail.data.taskItemList
+          for (let i = apTaskDetail.data.status.userFinishedTimes; i < apTaskDetail.data.status.finishNeed; i++) {
+            console.log(taskItemList[i].itemName)
+            res = await this.api('apTaskTimeRecord', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "taskId": 817})
+            await this.wait(31000)
+
+            res = await this.api('apDoTask', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "taskType": "BROWSE_CHANNEL", "taskId": t.id, "channel": 4, "itemId": encodeURIComponent(taskItemList[i].itemId), "checkVersion": true})
+            if (res.success) {
+              console.log('任务完成')
+            } else {
+              this.o2s(res, '任务失败')
+            }
+            await this.wait(3000)
+          }
+        }
+      }
+      await this.wait(2000)
+
+      res = await this.team('runningMyPrize', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "pageSize": 20, "time": null, "ids": null})
+      // res = await this.team('runningMyPrize', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "pageSize": 10, "time": 1660943842000, "ids": [1263040]})
+      // this.o2s(res)
+
       let sum: number = 0, success: number = 0
       rewardAmount = res.data.rewardAmount
       if (res.data.runningCashStatus.currentEndTime && res.data.runningCashStatus.status === 0) {
@@ -148,7 +175,7 @@ class Joy_Park_Run extends JDHelloWorld {
 
       for (let t of res?.data?.detailVos || []) {
         if (t.amount > 0 && getDate(new Date(t.createTime)) === new Date().getDate()) {
-          sum = this.add(sum, t.amount)
+          sum += t.amount
           success++
         } else {
           break
@@ -192,7 +219,7 @@ class Joy_Park_Run extends JDHelloWorld {
         console.log('战队收益', res.data.teamSumPrize)
       }
 
-      this.apiTool = new H5ST('b6ac3', 'jdltapp;', process.env.FP_B6AC3 || '')
+      this.apiTool = new H5ST('b6ac3', this.user.UserAgent, process.env.FP_B6AC3 || "", 'https://h5platform.jd.com/swm-stable/people-run/index?activityId=L-sOanK_5RJCz7I314FpnQ', 'https://h5platform.jd.com')
       await this.apiTool.__genAlgo()
       res = await this.runningPageHome()
       console.log('🧧', res.data.runningHomeInfo.prizeValue)
@@ -211,7 +238,7 @@ class Joy_Park_Run extends JDHelloWorld {
 
       res = await this.runningPageHome()
       for (let i = 0; i < energy; i++) {
-        if (res.data.runningHomeInfo.nextRunningTime / 1000 < 3000)
+        if (res.data.runningHomeInfo.nextRunningTime / 1000 < 3000 || new Date().getHours() > 15)
           break
         console.log('💉')
         res = await this.api('runningUseEnergyBar', {"linkId": "L-sOanK_5RJCz7I314FpnQ"})

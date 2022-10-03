@@ -123,16 +123,16 @@ async function jdPlantBean() {
     }
   } catch (e) {
     $.logErr(e);
-    const errMsg = `京东账号${$.index} ${$.nickName || $.UserName}\n任务执行异常，请检查执行日志 ‼️‼️`;
-    if ($.isNode()) await notify.sendNotify(`${$.name}`, errMsg);
-    $.msg($.name, '', `${errMsg}`)
+    // const errMsg = `京东账号${$.index} ${$.nickName || $.UserName}\n任务执行异常，请检查执行日志 ‼️‼️`;
+    // if ($.isNode()) await notify.sendNotify(`${$.name}`, errMsg);
+    // $.msg($.name, '', `${errMsg}`)
   }
 }
 
 function runTimes() {
   return new Promise((resolve, reject) => {
     $.get({
-      url: `https://api.jdsharecode.xyz/api/runTimes0509?activityId=bean&sharecode=${$.myPlantUuid}`
+      url: `https://sharecodepool.cnmb.win/api/runTimes0917?activityId=bean&sharecode=${$.myPlantUuid}`
     }, (err, resp, data) => {
       if (err) {
         console.log('上报失败', err)
@@ -563,7 +563,7 @@ async function plantBeanIndex() {
 
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `https://api.jdsharecode.xyz/api/bean/${randomCount}`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `https://sharecodepool.cnmb.win/api/bean/${randomCount}`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

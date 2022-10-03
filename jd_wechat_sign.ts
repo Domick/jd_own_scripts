@@ -4,43 +4,72 @@
  * cron: 8 0 * * *
  */
 
-import {H5ST} from "./utils/h5st"
+import {H5ST} from "./utils/h5st_3.1"
 import {User, JDHelloWorld} from "./TS_JDHelloWorld";
 
-class Wechat_sign extends JDHelloWorld {
+class Jd_wechat_sign extends JDHelloWorld {
+  user: User
+  h5stTool: H5ST
+
   constructor() {
-    super("微信小程序签到红包");
+    super("微信签到");
   }
 
   async init() {
-    await this.run(new Wechat_sign())
+    await this.run(this)
+  }
+
+  async api(fn: string, body: object) {
+    let h5st: string = await this.h5stTool.__genH5st({
+      'appid': 'hot_channel',
+      'body': JSON.stringify(body),
+      'client': 'apple',
+      'clientVersion': '7.21.190',
+      'functionId': `SignComponent_${fn}`,
+    })
+
+    let temp: string = fn !== 'startScanTask' ? 'signTask' : 'scanTask'
+    let fnId: string = fn !== 'startScanTask' ? fn : 'doScanTask'
+    return this.post(`https://api.m.jd.com/${temp}/${fn}`, `client=apple&clientVersion=7.21.190&functionId=SignComponent_${fnId}&appid=hot_channel&loginType=2&body=${encodeURIComponent(JSON.stringify(body))}&h5st=${h5st}`, {
+      'Host': 'api.m.jd.com',
+      'wqreferer': 'http://wq.jd.com/wxapp/pages/market/market2/index',
+      'referer': 'https://servicewechat.com/wx91d27dbf599dff74/656/page-frame.html',
+      'cookie': this.user.cookie,
+      'user-agent': this.user.UserAgent
+    })
   }
 
   async main(user: User) {
-    let h5stTool = new H5ST("9a38a", 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79 MicroMessenger/8.0.15(0x18000f2e) NetType/WIFI Language/zh_CN', process.env.FP_9A38A || "");
-    await h5stTool.__genAlgo()
-    let timestamp: number = Date.now()
-    let h5st: string = h5stTool.__genH5st({
-      appid: 'hot_channel',
-      body: JSON.stringify({"activityId": "10002"}),
-      client: 'android',
-      clientVersion: '7.16.250',
-      functionId: 'SignComponent_doSignTask',
-      t: timestamp.toString(),
-    })
-    let res: any = await this.post(`https://api.m.jd.com/signTask/doSignTask?functionId=SignComponent_doSignTask&appid=hot_channel&body={"activityId":"10002"}&client=android&clientVersion=7.16.250&t=${timestamp}&h5st=${h5st}`, '', {
-      'content-type': 'application/json',
-      'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79 MicroMessenger/8.0.15(0x18000f2e) NetType/WIFI Language/zh_CN',
-      'referer': 'https://servicewechat.com/wx91d27dbf599dff74/581/page-frame.html',
-      'cookie': user.cookie
-    })
-    if (res.data) {
-      console.log('已签到', res.data.signDays, '天，奖励', res.data.rewardValue, '元')
-      return {msg: `【京东账号${user.index + 1}】  ${user.UserName}\n已签到  ${res.data.signDays}天\n奖励  ${res.data.rewardValue}元\n\n`}
-    } else {
-      console.log(res.message)
+    try {
+      this.user = user
+      this.user.UserAgent = `Mozilla/5.0 (iPhone; CPU iPhone OS ${this.getIosVer()} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.28(0x18001c2b) NetType/WIFI Language/zh_CN`
+      let res: any
+
+      this.h5stTool = new H5ST("9a38a", this.user.UserAgent, process.env.FP_9A38A, 'http://wq.jd.com/wxapp/pages/market/market2/index', 'http://wq.jd.com', this.user.UserName);
+      await this.h5stTool.__genAlgo()
+
+      res = await this.api('querySignStatus', {"activityId": "10004", "activeId": "", "groupId": "", "version": 1})
+      this.o2s(res, 'querySignStatus')
+
+      res = await this.api('doSignTask', {"activityId": "10004", "version": 1})
+      this.o2s(res, 'doSignTask')
+
+      res = await this.api('querySignList', {"activityId": "10004", "version": 1})
+      this.o2s(res, 'querySignList')
+
+      if (!res.data.scanTaskInfo.completionFlag) {
+        res = await this.api('startScanTask', {"itemId": res.data.scanTaskInfo.itemId, "activityId": "10004", "scanAssignmentId": res.data.scanTaskInfo.scanAssignmentId, "actionType": 1, "version": 1})
+        this.o2s(res, 'startScanTask 1')
+        await this.wait(10000)
+
+        res = await this.api('startScanTask', {"itemId": res.data.scanTaskInfo.itemId, "activityId": "10004", "scanAssignmentId": res.data.scanTaskInfo.scanAssignmentId, "actionType": 0, "version": 1})
+        this.o2s(res, 'startScanTask 0')
+      }
+
+    } catch (e) {
+      console.log(e.message)
     }
   }
 }
 
-new Wechat_sign().init().then()
+new Jd_wechat_sign().init().then()

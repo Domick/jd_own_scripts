@@ -61,7 +61,7 @@ let shareCodesSelf: string[] = [], shareCodesHW: string[] = []
       petids = homePageInfo.data.petinfo.map(pet => {
         return pet.petid
       })
-      console.log('当前🐔🐔：', petids)
+      // console.log('当前🐔🐔：', petids)
       petNum = homePageInfo.data.petinfo.length
       coins = homePageInfo.data.coins
     } catch (e: any) {
@@ -215,15 +215,33 @@ let shareCodesSelf: string[] = [], shareCodesHW: string[] = []
     await wait(8000)
 
     console.log('除草...start')
-    for (let j = 0; j < 30; j++) {
+    for (let j = 0; j < 100; j++) {
       try {
-        res = await api('operservice/Action', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp,type', {type: '2'})
+        res = await api('operservice/Action', 'activeid,activekey,channel,dn,do,dov,dv,eid,fp,jxmc_jstoken,phoneid,sceneid,timestamp,type', {
+          'eid': '',
+          'fp': '',
+          'dv': '',
+          'do': '',
+          'dov': '',
+          'dn': '',
+          'type': '2',
+        })
         if (res.data.addcoins === 0 || JSON.stringify(res.data) === '{}') break
-        console.log('锄草:', res.data.addcoins)
+        console.log('锄草:', res.data.addcoins, res.data.surprise ? '🎁' : '')
         await wait(5000)
         if (res.data.surprise) {
-          res = await api("operservice/GetSelfResult", "activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp,type", {type: '14', itemid: 'undefined'})
-          console.log('锄草奖励:', res.data.prizepool)
+          res = await api("operservice/GetSelfResult", "activeid,activekey,channel,commtype,dn,do,dov,dv,eid,fp,jxmc_jstoken,phoneid,sceneid,timestamp,type", {
+            'eid': '',
+            'fp': '',
+            'dv': '',
+            'do': '',
+            'dov': '',
+            'dn': '',
+            'type': '14',
+            'itemid': '{}',
+            'commtype': '3'
+          })
+          console.log('锄草奖励:', res.data.addcoins)
           await wait(5000)
         }
       } catch (e: any) {
@@ -233,7 +251,7 @@ let shareCodesSelf: string[] = [], shareCodesHW: string[] = []
     }
     await wait(6000)
 
-    for (let j = 0; j < 30; j++) {
+    for (let j = 0; j < 100; j++) {
       try {
         res = await api('operservice/Action', 'activeid,activekey,channel,jxmc_jstoken,petid,phoneid,sceneid,timestamp,type', {type: '1', petid: petids[Math.floor((Math.random() * petids.length))]})
         if (res.data.addcoins === 0 || JSON.stringify(res.data) === '{}') break
@@ -253,7 +271,7 @@ let shareCodesSelf: string[] = [], shareCodesHW: string[] = []
     }
     // 获取随机助力码
     try {
-      let {data}: any = await axios.get(`https://api.jdsharecode.xyz/api/jxmc/30`, {timeout: 10000})
+      let {data}: any = await axios.get(`https://sharecodepool.cnmb.win/api/jxmc/30`, {timeout: 10000})
       console.log('获取到30个随机助力码:', data.data)
       shareCodes = Array.from(new Set([...shareCodesSelf, ...shareCodesHW, ...data.data]))
     } catch (e: any) {
@@ -332,7 +350,7 @@ async function getTask() {
   return 0
 }
 
-async function api(fn: string, stk: string, params: Params = {}) {
+async function api(fn: string, stk: string, params: Object = {}) {
   let url: string, t: { [key: string]: string } = {
     activeid: 'jxmc_active_0001',
     activekey: 'null',
@@ -375,7 +393,7 @@ async function makeShareCodes(code: string) {
     let bean: string = await getBeanShareCode(cookie)
     let farm: string = await getFarmShareCode(cookie)
     let pin: string = Md5.hashStr(cookie.match(/pt_pin=([^;]*)/)![1])
-    let data = await get(`https://api.jdsharecode.xyz/api/autoInsert/jxmc?sharecode=${code}&bean=${bean}&farm=${farm}&pin=${pin}`)
+    let data = await get(`https://sharecodepool.cnmb.win/api/autoInsert/jxmc?sharecode=${code}&bean=${bean}&farm=${farm}&pin=${pin}`)
     console.log(data.message)
   } catch (e) {
     console.log('自动提交失败')
