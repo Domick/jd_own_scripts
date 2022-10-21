@@ -222,3 +222,7 @@
 10 20,21,22 * * *  cd /scripts && ts-node jd_618_hongbao_1.ts >> /scripts/logs/jd_618_hongbao_1.log 2>&1
 # 运行即领取膨胀红包
 5 21 * * *  cd /scripts && ts-node jd_618_hongbao_award.ts >> /scripts/logs/jd_618_hongbao_award.log 2>&1
+# abc
+15,35 21 * * * cd /scripts && ts-node jd_abc.ts >> /scripts/logs/jd_abc.log 2>&1
+# bcd
+15 8 * * * cd /scripts && ts-node jd_bcd.ts >> /scripts/logs/jd_bcd.log 2>&1

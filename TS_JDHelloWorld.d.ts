@@ -12,7 +12,7 @@ declare class JDHelloWorld {
     constructor(scriptName?: string);
     getCookie(): Promise<void>;
     exceptCookie(filename?: string): string[];
-    get(url: string, headers?: any): Promise<any>;
+    get(url: string, headers?: any, params?: object): Promise<any>;
     post(url: string, data: any, headers?: any, params?: object): Promise<object | string>;
     wait(ms?: number): Promise<unknown>;
     o2s(msg: string | object, title?: string): void;
@@ -28,6 +28,7 @@ declare class JDHelloWorld {
     getSign(fn: string, body: object): Promise<string>;
     getIosVer(): string;
     getFp(): Promise<string>;
+    body(body: object): Promise<object>;
     run(son: {
         main: any;
         help?: any;
